@@ -2,14 +2,16 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, spicetify-nix,  ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       inputs.home-manager.nixosModules.default
+      inputs.spicetify-nix.nixosModules.default
     ];
+
   # create a 16GB swap file
   swapDevices = [{ device = "/swapfile"; size = 16 * 1024; }];
 
@@ -84,7 +86,7 @@
   services.desktopManager.plasma6.enable = true;
 
   #Enable hyprland
-    programs.hyprland.enable = true; # enable Hyprland
+  programs.hyprland.enable = true; # enable Hyprland
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -130,6 +132,33 @@
   programs.steam.enable = true;
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
+  programs.dconf.enable = true;
+#modded spotify with adblock and theme
+  programs.spicetify =
+let
+  spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+in
+{
+  enable = true;
+
+  enabledExtensions = with spicePkgs.extensions; [
+    adblock
+    hidePodcasts
+    shuffle # shuffle+ (special characters are sanitized out of extension names)
+  ];
+  enabledCustomApps = with spicePkgs.apps; [
+    newReleases
+    ncsVisualizer
+  ];
+  enabledSnippets = with spicePkgs.snippets; [
+    rotatingCoverart
+    pointer
+  ];
+
+  theme = spicePkgs.themes.catppuccin;
+  colorScheme = "mocha";
+};
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -140,9 +169,14 @@
   pkgs.wineWowPackages.waylandFull
   pkgs.kitty
   git
+  zip
+  unzip
   pkgs.vesktop
   pkgs.blanket
-
+  pkgs.gearlever
+  pkgs.easyeffects
+  pkgs.fragments
+  pkgs.neofetch
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
