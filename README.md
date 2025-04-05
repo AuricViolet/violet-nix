@@ -5,7 +5,8 @@
 <h1 align ="center"><picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/2744_fe0f/512.webp" type="image/webp">
   <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2744_fe0f/512.gif" alt="❄" width="32" height="32">
-</picture> My personal NIXOS config and dot files <picture>
+</picture> My personal NixOS config and dot files <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/2744_fe0f/512.webp" type="image/webp">
   <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2744_fe0f/512.gif" alt="❄" width="32" height="32">
 </picture></h1>
+<h2 align="center"> This is a dirty cloud kingdom for my dotfiles for NixOS </h2>
