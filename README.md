@@ -1,4 +1,5 @@
-<p align = center> ![image](https://github.com/user-attachments/assets/986c8253-a6e6-4eb9-b58a-59aced30910b)
+<p align = center>
+  ![image](https://github.com/user-attachments/assets/986c8253-a6e6-4eb9-b58a-59aced30910b)
 </p>
 <picture>
   <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.webp" type="image/webp">
