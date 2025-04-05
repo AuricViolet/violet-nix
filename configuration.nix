@@ -8,10 +8,10 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      inputs.spicetify-nix.nixosModules.default
+      inputs.spicetify-nix.nixosModules.default #imports spicetify for spotify themeing
     ];
 
-  # create a 16GB swap file
+  # Creates a 16GB swap file, pages to disk if RAM overflows
   swapDevices = [{ device = "/swapfile"; size = 16 * 1024; }];
 
   # Enable OpenGL
@@ -57,6 +57,13 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Disable the systemd auto-suspend feature that cannot be disabled in GUI!
+  # If no user is logged in, the machine will power down after 20 minutes.
+  systemd.targets.sleep.enable = false;
+  systemd.targets.suspend.enable = false;
+  systemd.targets.hibernate.enable = false;
+  systemd.targets.hybrid-sleep.enable = false;
+
   #Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes"];
 
@@ -78,7 +85,7 @@
 
   # Enable the X11 windowing system.
   # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = true;
+  services.xserver.enable = false;
 
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
@@ -119,12 +126,17 @@
     ];
   };
 
-  # Install firefox.
+  # Install Apps from nixos repo.
   programs.firefox.enable = true;
   programs.steam.enable = true;
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
   programs.dconf.enable = true;
+  #enable app image interpreter
+  programs.appimage.enable = true;
+  programs.appimage.binfmt = true;
+
+
 #modded spotify with adblock and theme
   programs.spicetify =
 let
@@ -169,6 +181,9 @@ in
   pkgs.easyeffects
   pkgs.fragments
   pkgs.neofetch
+  pkgs.appimage-run
+  pkgs.uwufetch
+  pkgs.fuse
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -178,6 +193,8 @@ in
   #   enable = true;
   #   enableSSHSupport = true;
   # };
+
+  #App Image Wrapping
 
   # List services that you want to enable:
 
