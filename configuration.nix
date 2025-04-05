@@ -8,7 +8,6 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      inputs.home-manager.nixosModules.default
       inputs.spicetify-nix.nixosModules.default
     ];
 
@@ -61,7 +60,7 @@
   #Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes"];
 
-  networking.hostName = "psyche"; # Define your hostname.
+  networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -118,13 +117,6 @@
       kdePackages.kate
     #  thunderbird
     ];
-  };
-
-  home-manager = {
-  extraSpecialArgs = { inherit inputs; };
-  users = {
-  "violet" = import ./home.nix;
-    };
   };
 
   # Install firefox.
