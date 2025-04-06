@@ -91,8 +91,10 @@
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
 
-  #Enable hyprland
+  #Enable hyprland and dependencies
   programs.hyprland.enable = true; # enable Hyprland
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -135,6 +137,12 @@
   #enable app image interpreter
   programs.appimage.enable = true;
   programs.appimage.binfmt = true;
+
+  #hyprland nvidia stuff
+  programs.hyprland = {
+  enable = true;
+  nvidiaPatches = true;
+  xwayland.enable = true;}
 
 
 #modded spotify with adblock and theme
@@ -184,8 +192,17 @@ in
   pkgs.appimage-run
   pkgs.uwufetch
   pkgs.fuse
+  pkgs.waybar
+  pkgs.rofi-wayland
   ];
 
+
+  environment.sessionVariables = {
+  #If your cursor becomes invisible
+  #WLR_NO_HARDWARE_CURSORS = "1";
+  #Hint electron apps to use wayland
+  #NIXOS_OZONE_WL = "1";
+};
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
