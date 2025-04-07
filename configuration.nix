@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, spicetify-nix,  ... }:
+{ config, pkgs, inputs, spicetify-nix, ... }:
 
 {
   imports =
@@ -23,28 +23,11 @@
   services.xserver.videoDrivers = ["nvidia"];
 
   hardware.nvidia = {
-
-    # Modesetting is required.
     modesetting.enable = true;
-
-    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-    # Enable this if you have graphical corruption issues or application crashes after waking
-    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
-    # of just the bare essentials.
     powerManagement.enable = false;
-
-    # Fine-grained power management. Turns off GPU when not in use.
-    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
     powerManagement.finegrained = false;
-
-    # Use the NVidia open source kernel module (not to be confused with the
-    # independent third-party "nouveau" open source driver).
-    # Support is limited to the Turing and later architectures. Full list of
-    # supported GPUs is at:
-    # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus
-    # Only available from driver 515.43.04+
+    # Use the NVidia open source kernel module
     open = false;
-
     # Enable the Nvidia settings menu,
 	# accessible via `nvidia-settings`.
     nvidiaSettings = true;
@@ -67,7 +50,7 @@
   #Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes"];
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "boreas"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -83,27 +66,10 @@
   # Select internationalisation properties.
   i18n.defaultLocale = "en_CA.UTF-8";
 
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = false;
-
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
-
-  #Enable hyprland and dependencies
-  programs.hyprland.enable = true; # enable Hyprland
-  xdg.portal.enable = true;
-  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
 
   # Enable sound with pipewire.
   security.rtkit.enable = true;
@@ -118,15 +84,16 @@
   # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.violet = {
+  users.users.isolde = {
     isNormalUser = true;
-    description = "violet";
+    description = "isolde";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       kdePackages.kate
     #  thunderbird
     ];
   };
+
 
   # Install Apps from nixos repo.
   programs.firefox.enable = true;
@@ -137,20 +104,12 @@
   #enable app image interpreter
   programs.appimage.enable = true;
   programs.appimage.binfmt = true;
-
-  #hyprland nvidia stuff
-  programs.hyprland = {
-  enable = true;
-  nvidiaPatches = true;
-  xwayland.enable = true;}
-
-
-#modded spotify with adblock and theme
+  #modded spotify with adblock and theme
   programs.spicetify =
-let
+  let
   spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
-in
-{
+  in
+  {
   enable = true;
 
   enabledExtensions = with spicePkgs.extensions; [
@@ -201,7 +160,7 @@ in
   #If your cursor becomes invisible
   #WLR_NO_HARDWARE_CURSORS = "1";
   #Hint electron apps to use wayland
-  #NIXOS_OZONE_WL = "1";
+  NIXOS_OZONE_WL = "1";
 };
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
