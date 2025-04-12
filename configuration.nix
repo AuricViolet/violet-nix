@@ -12,8 +12,12 @@
     ];
 
   # Creates a 16GB swap file, pages to disk if RAM overflows
-  swapDevices = [{ device = "/swapfile"; size = 16 * 1024; }];
-
+  # swapDevices = [{ device = "/swapfile"; size = 16 * 1024; }];
+    zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 30;
+  };
   # Enable OpenGL
   hardware.graphics = {
     enable = true;
@@ -21,21 +25,27 @@
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
-
   hardware.nvidia = {
+    forceFullCompositionPipeline = true;
     modesetting.enable = true;
-    powerManagement.enable = false;
+    powerManagement.enable = true;
     powerManagement.finegrained = false;
-    # Use the NVidia open source kernel module
     open = false;
-    # Enable the Nvidia settings menu,
-	# accessible via `nvidia-settings`.
     nvidiaSettings = true;
-
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.stable;
+    nvidiaPersistenced = true;
   };
 
+  #Keep only the previous 5 generations, discard all others daily, optimize store for storage.
+
+  nix.settings.auto-optimise-store = true;
+  nix.gc.automatic = true;
+  nix.gc.dates = "daily";
+  nix.gc.options = "--delete-older-than +5";
+
+  #upgrade to latest kernel version
+  boot.kernelPackages = pkgs.linuxPackages_testing;
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -67,9 +77,13 @@
   i18n.defaultLocale = "en_CA.UTF-8";
 
   # Enable the KDE Plasma Desktop Environment.
+  ###services.netdata.python.recommendedPythonPackages=true;
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.theme = "catppuccin-mocha";
   services.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
+  services.hypridle.enable = true;
+
 
   # Enable sound with pipewire.
   security.rtkit.enable = true;
@@ -104,7 +118,17 @@
   #enable app image interpreter
   programs.appimage.enable = true;
   programs.appimage.binfmt = true;
-  #modded spotify with adblock and theme
+  programs.appimage.package = pkgs.appimage-run.override { extraPkgs = pkgs: [
+  pkgs.icu
+  pkgs.libxcrypt-legacy
+  pkgs.python312
+  pkgs.python312Packages.torch
+  ]; };
+  programs.hyprland.enable = true;
+  programs.hyprlock.enable = true;
+
+
+  #modded spotify with adblock and catppuccin mocha theme
   programs.spicetify =
   let
   spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
@@ -135,9 +159,9 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+
   environment.systemPackages = with pkgs; [
   pkgs.lutris
-  pkgs.wineWowPackages.waylandFull
   pkgs.kitty
   git
   zip
@@ -147,20 +171,33 @@
   pkgs.gearlever
   pkgs.easyeffects
   pkgs.fragments
-  pkgs.neofetch
+  pkgs.fastfetch
   pkgs.appimage-run
-  pkgs.uwufetch
   pkgs.fuse
+  pkgs.hyprland
   pkgs.waybar
-  pkgs.rofi-wayland
+  pkgs.wine
+  pkgs.winetricks
+  pkgs.wofi
+  pkgs.kdePackages.filelight
+  pkgs.calibre
+  pkgs.hyprpaper
+  pkgs.hypridle
+  (pkgs.catppuccin-sddm.override {
+    flavor = "mocha";
+    font  = "Noto Sans";
+    fontSize = "9";
+    background = "${./wallpaper.png}";
+    loginBackground = true;
+  }
+)
   ];
-
 
   environment.sessionVariables = {
   #If your cursor becomes invisible
   #WLR_NO_HARDWARE_CURSORS = "1";
   #Hint electron apps to use wayland
-  NIXOS_OZONE_WL = "1";
+  #NIXOS_OZONE_WL = "1";
 };
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -170,7 +207,9 @@
   #   enableSSHSupport = true;
   # };
 
-  #App Image Wrapping
+  fonts.packages = with pkgs; [
+  font-awesome
+   ];
 
   # List services that you want to enable:
 
