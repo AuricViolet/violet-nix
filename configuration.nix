@@ -2,17 +2,23 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, spicetify-nix, ... }:
+{ config, pkgs, inputs, spicetify-nix,lib, chaotic, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       inputs.spicetify-nix.nixosModules.default #imports spicetify for spotify themeing
+
     ];
 
+  programs.nix-ld = {
+    enable = true;
+    libraries = pkgs.steam-run.args.multiPkgs pkgs;
+  };
+
   # Creates a 16GB swap file, pages to disk if RAM overflows
-  # swapDevices = [{ device = "/swapfile"; size = 16 * 1024; }];
+  swapDevices = [{ device = "/swapfile"; size = 16 * 1024; }];
     zramSwap = {
     enable = true;
     algorithm = "zstd";
@@ -22,7 +28,10 @@
   hardware.graphics = {
     enable = true;
   };
+#disable annoying KDE services on boot
 
+systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
+systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable = false;
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
   hardware.nvidia = {
@@ -45,7 +54,7 @@
   nix.gc.options = "--delete-older-than +5";
 
   #upgrade to latest kernel version
-  boot.kernelPackages = pkgs.linuxPackages_testing;
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -82,17 +91,26 @@
   services.displayManager.sddm.theme = "catppuccin-mocha";
   services.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
+  services.displayManager.defaultSession = "plasma";
   services.hypridle.enable = true;
+  services.scx.enable = true; # by default uses scx_rustland scheduler
 
 
   # Enable sound with pipewire.
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
+    extraConfig.pipewire = {
+      "context.properties" = {
+        "default.clock.rate" = 48000;
+        "default.clock.quantum" = 2048;
+        "default.clock.min-quantum" = 2048;
+        "default.clock.max-quantum" = 8192;};
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
     };
+  };
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -111,7 +129,8 @@
 
   # Install Apps from nixos repo.
   programs.firefox.enable = true;
-  programs.steam.enable = true;
+  programs.steam = {
+    enable = true;};
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
   programs.dconf.enable = true;
@@ -119,31 +138,34 @@
   programs.appimage.enable = true;
   programs.appimage.binfmt = true;
   programs.appimage.package = pkgs.appimage-run.override { extraPkgs = pkgs: [
-  pkgs.icu
-  pkgs.libxcrypt-legacy
-  pkgs.python312
-  pkgs.python312Packages.torch
+    pkgs.icu
+    pkgs.libxcrypt-legacy
+    pkgs.python312
+    pkgs.python312Packages.torch
   ]; };
   programs.hyprland.enable = true;
   programs.hyprlock.enable = true;
+  programs.partition-manager.enable = true;
 
 
   #modded spotify with adblock and catppuccin mocha theme
   programs.spicetify =
   let
-  spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
+    spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
   in
   {
-  enable = true;
+    enable = true;
 
-  enabledExtensions = with spicePkgs.extensions; [
-    adblock
-    hidePodcasts
-    shuffle # shuffle+ (special characters are sanitized out of extension names)
+    enabledExtensions = with spicePkgs.extensions; [
+      adblock
+      hidePodcasts
+      shuffle # shuffle+ (special characters are sanitized out of extension names)
   ];
   enabledCustomApps = with spicePkgs.apps; [
     newReleases
     ncsVisualizer
+    marketplace
+
   ];
   enabledSnippets = with spicePkgs.snippets; [
     rotatingCoverart
@@ -161,29 +183,30 @@
   # $ nix search wget
 
   environment.systemPackages = with pkgs; [
-  pkgs.lutris
-  pkgs.kitty
-  git
-  zip
-  unzip
-  pkgs.vesktop
-  pkgs.blanket
-  pkgs.gearlever
-  pkgs.easyeffects
-  pkgs.fragments
-  pkgs.fastfetch
-  pkgs.appimage-run
-  pkgs.fuse
-  pkgs.hyprland
-  pkgs.waybar
-  pkgs.wine
-  pkgs.winetricks
-  pkgs.wofi
-  pkgs.kdePackages.filelight
-  pkgs.calibre
-  pkgs.hyprpaper
-  pkgs.hypridle
-  (pkgs.catppuccin-sddm.override {
+    pkgs.lutris
+    pkgs.kitty
+    git
+    zip
+    unzip
+    pkgs.vesktop
+    pkgs.gearlever
+    pkgs.easyeffects
+    pkgs.fragments
+    pkgs.fastfetch
+    pkgs.appimage-run
+    pkgs.fuse
+    pkgs.hyprland
+    pkgs.waybar
+    pkgs.winetricks
+    pkgs.wineWowPackages.waylandFull
+    pkgs.wineWowPackages.stable
+    pkgs.protontricks
+    pkgs.wineWow64Packages.wayland
+    pkgs.rofi
+    pkgs.nerd-fonts.jetbrains-mono
+    pkgs.kdePackages.filelight
+    pkgs.calibre
+    (pkgs.catppuccin-sddm.override {
     flavor = "mocha";
     font  = "Noto Sans";
     fontSize = "9";
@@ -197,7 +220,7 @@
   #If your cursor becomes invisible
   #WLR_NO_HARDWARE_CURSORS = "1";
   #Hint electron apps to use wayland
-  #NIXOS_OZONE_WL = "1";
+  NIXOS_OZONE_WL = "1";
 };
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -208,9 +231,17 @@
   # };
 
   fonts.packages = with pkgs; [
-  font-awesome
+    font-awesome
    ];
 
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+  elisa
+  xwaylandvideobridge
+  korganizer
+  khelpcenter
+  akonadi
+
+];
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
