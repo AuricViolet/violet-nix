@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, spicetify-nix,lib, chaotic, ... }:
+{ config, pkgs, inputs, spicetify-nix,lib, chaotic,nix-gaming,zen-browser, ... }:
 
 {
   imports =
@@ -86,7 +86,7 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   i18n.defaultLocale = "en_CA.UTF-8";
 
   # Enable the KDE Plasma Desktop Environment.
-  ###services.netdata.python.recommendedPythonPackages=true;
+  services.netdata.python.recommendedPythonPackages=true;
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.theme = "catppuccin-mocha";
   services.displayManager.sddm.wayland.enable = true;
@@ -109,6 +109,13 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    lowLatency = {
+      # enable this module
+      enable = true;
+      # defaults (no need to be set unless modified)
+      quantum = 64;
+      rate = 48000;
+    };
     };
   };
 
@@ -130,7 +137,9 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   # Install Apps from nixos repo.
   programs.firefox.enable = true;
   programs.steam = {
-    enable = true;};
+  enable = true;
+  extraCompatPackages = [ pkgs.proton-ge-bin ];
+  };
   programs.steam.gamescopeSession.enable = true;
   programs.gamemode.enable = true;
   programs.dconf.enable = true;
@@ -147,7 +156,8 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   programs.hyprlock.enable = true;
   programs.partition-manager.enable = true;
 
-
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   #modded spotify with adblock and catppuccin mocha theme
   programs.spicetify =
   let
@@ -183,6 +193,8 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   # $ nix search wget
 
   environment.systemPackages = with pkgs; [
+    inputs.zen-browser.packages."${system}".specific
+    #inputs.nix-gaming.packages.${pkgs.system}.<package>
     pkgs.lutris
     pkgs.kitty
     git

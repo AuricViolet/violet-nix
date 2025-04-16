@@ -5,6 +5,8 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    zen-browser.url = "github:MarceColl/zen-browser-flake";
+    nix-gaming.url = "github:fufexan/nix-gaming";
     # home-manager, used for managing user configuration
     #home-manager = {
       #url = "github:nix-community/home-manager";
@@ -16,7 +18,8 @@
     # use "nixos", or your hostname as the name of the configuration
     # it's a better practice than "default" shown in the video
    nixosConfigurations.boreas = nixpkgs.lib.nixosSystem {
-     specialArgs = {inherit inputs;};
+      system = "x86_64-linux";
+      specialArgs = {inherit inputs;};
       modules = [
         ./configuration.nix
         chaotic.nixosModules.default # OUR DEFAULT MODULE
