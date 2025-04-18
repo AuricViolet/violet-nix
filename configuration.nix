@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, spicetify-nix,lib, chaotic,nix-gaming,zen-browser, ... }:
+{ config, pkgs, inputs, spicetify-nix,lib, chaotic,nix-gaming,neve, ... }:
 
 {
   imports =
@@ -19,15 +19,15 @@
 
   # Creates a 16GB swap file, pages to disk if RAM overflows
   swapDevices = [{ device = "/swapfile"; size = 16 * 1024; }];
-    zramSwap = {
-    enable = true;
-    algorithm = "zstd";
-    memoryPercent = 30;
-  };
+    #zramSwap = {
+    #enable = true;
+    #algorithm = "zstd";
+    #priority = 100;
   # Enable OpenGL
   hardware.graphics = {
     enable = true;
   };
+  hardware.cpu.amd.updateMicrocode = true;
 #disable annoying KDE services on boot
 
 systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
@@ -35,7 +35,6 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
   hardware.nvidia = {
-    forceFullCompositionPipeline = true;
     modesetting.enable = true;
     powerManagement.enable = true;
     powerManagement.finegrained = false;
@@ -51,13 +50,25 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   nix.settings.auto-optimise-store = true;
   nix.gc.automatic = true;
   nix.gc.dates = "daily";
-  nix.gc.options = "--delete-older-than +5";
+  nix.gc.options = "-d --delete-older-than +5";
 
   #upgrade to latest kernel version
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
+  boot.kernelParams = [ "amd_pstate=guided" "quiet" "splash" "systemd.show_status=false"];
+  boot.initrd.kernelModules = [ "nvidia" ];
+  #powerManagement.enable = true;
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernel.sysctl = {
+  "vm.nr_hugepages" = 128;
+  "vm.swappiness" = 60;  # Try increasing swappiness to encourage swap usage before freezing
+};
+
+  boot.plymouth = {
+  enable = true;
+  theme = "spinfinity";};# or "spinfinity", "fade-in", etc.
+# Adjust based on your workload
 
   # Disable the systemd auto-suspend feature that cannot be disabled in GUI!
   # If no user is logged in, the machine will power down after 20 minutes.
@@ -86,38 +97,26 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   i18n.defaultLocale = "en_CA.UTF-8";
 
   # Enable the KDE Plasma Desktop Environment.
-  services.netdata.python.recommendedPythonPackages=true;
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.theme = "catppuccin-mocha";
   services.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "plasma";
-  services.hypridle.enable = true;
+  #services.hypridle.enable = true;
   services.scx.enable = true; # by default uses scx_rustland scheduler
+  services.printing.enable = false;
+  services.blueman.enable = false; # Disable Bluetooth if unused
 
 
   # Enable sound with pipewire.
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
-    extraConfig.pipewire = {
-      "context.properties" = {
-        "default.clock.rate" = 48000;
-        "default.clock.quantum" = 2048;
-        "default.clock.min-quantum" = 2048;
-        "default.clock.max-quantum" = 8192;};
     alsa.enable = true;
-    alsa.support32Bit = true;
+    audio.enable = true;
     pulse.enable = true;
-    lowLatency = {
-      # enable this module
-      enable = true;
-      # defaults (no need to be set unless modified)
-      quantum = 64;
-      rate = 48000;
+    jack.enable = true;
     };
-    };
-  };
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -151,6 +150,10 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
     pkgs.libxcrypt-legacy
     pkgs.python312
     pkgs.python312Packages.torch
+    pkgs.cudaPackages.cudnn
+    pkgs.cudaPackages.cudatoolkit
+    pkgs.libGL
+    pkgs.python312Packages.torchvision
   ]; };
   programs.hyprland.enable = true;
   programs.hyprlock.enable = true;
@@ -158,7 +161,9 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
 
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+
   #modded spotify with adblock and catppuccin mocha theme
+
   programs.spicetify =
   let
     spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
@@ -178,7 +183,6 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
 
   ];
   enabledSnippets = with spicePkgs.snippets; [
-    rotatingCoverart
     pointer
   ];
 
@@ -193,29 +197,34 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   # $ nix search wget
 
   environment.systemPackages = with pkgs; [
-    inputs.zen-browser.packages."${system}".specific
     #inputs.nix-gaming.packages.${pkgs.system}.<package>
     pkgs.lutris
     pkgs.kitty
+    kdePackages.plasma-workspace
+    kdePackages.kde-gtk-config
+    kdePackages.kwin
+    kdePackages.systemsettings
     git
     zip
     unzip
+    pkgs.cudaPackages.cudnn
+    pkgs.cudaPackages.cudatoolkit
+    pkgs.python313Packages.torchvision
+    pkgs.libGL
     pkgs.vesktop
     pkgs.gearlever
     pkgs.easyeffects
     pkgs.fragments
     pkgs.fastfetch
     pkgs.appimage-run
-    pkgs.fuse
     pkgs.hyprland
     pkgs.waybar
     pkgs.winetricks
     pkgs.wineWowPackages.waylandFull
-    pkgs.wineWowPackages.stable
     pkgs.protontricks
-    pkgs.wineWow64Packages.wayland
     pkgs.rofi
     pkgs.nerd-fonts.jetbrains-mono
+    pkgs.faudio
     pkgs.kdePackages.filelight
     pkgs.calibre
     (pkgs.catppuccin-sddm.override {
@@ -229,6 +238,16 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   ];
 
   environment.sessionVariables = {
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    KWIN_TRIPLE_BUFFER = "1";  # Smoother rendering
+    KWIN_COMPOSE = "O2";       # Faster startup
+    KDE_NO_PRELOADING = "0";
+    BALOO_DISABLE = "1";
+    MOZ_ENABLE_WAYLAND = "1";
+    QT_QUICK_BACKEND = "opengl";
+    #KWIN_TRIPLE_BUFFER = "1";
+    KWIN_BACKEND = "vulkan";
+    KWIN_LOW_LATENCY = "1";
   #If your cursor becomes invisible
   #WLR_NO_HARDWARE_CURSORS = "1";
   #Hint electron apps to use wayland
@@ -242,6 +261,7 @@ systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable
   #   enableSSHSupport = true;
   # };
 
+  fonts.fontconfig.cache32Bit = true;
   fonts.packages = with pkgs; [
     font-awesome
    ];
