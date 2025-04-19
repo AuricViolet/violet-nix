@@ -24,6 +24,17 @@
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
+  fileSystems."/mnt/Avalanche" = {
+  device = "/dev/disk/by-uuid/f53b3f33-9df9-4b04-9c44-7eb96dc6c8c1";
+  fsType = "ext4";
+  options = [ "defaults" "nofail" "rw"];  # 'nofail' allows boot even if it's missing
+};
+
+fileSystems."/mnt/Blizzard" = {
+  device = "/dev/disk/by-uuid/25eecef6-e1c4-4911-8467-76530867aeed";
+  fsType = "ext4";
+  options = [ "defaults" "nofail" "rw"];  # 'nofail' allows boot even if it's missing
+};
   swapDevices = [ ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
