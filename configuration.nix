@@ -29,6 +29,10 @@
   i18n.defaultLocale = "en_CA.UTF-8";
   networking.hostName = "boreas";
   networking.networkmanager.enable = true;
+  system.autoUpgrade = {
+    enable = true;
+    allowReboot = false;
+  };
 
   # ─────────────────────────────────────────────────────────────────────────
   # ❄️ Flake magic & nix settings
@@ -38,10 +42,12 @@
     auto-optimise-store = true;
   };
 
+  services.flatpak.enable = true;
+
   nix.gc = {
     automatic = true;
     dates = "daily";
-    options = "-d --delete-older-than +5";
+    options = "-d";
   };
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -49,17 +55,31 @@
   # ─────────────────────────────────────────────────────────────────────────
   boot = {
     kernelPackages = pkgs.linuxPackages_cachyos;
-    kernelParams = [ "quiet" "splash" "systemd.show_status=false" ];
-    initrd.kernelModules = [ "nvidia" ];
+    kernelParams = [ "quiet" "splash" "systemd.show_status=false" "boot.shell_on_fail" "udev.log_priority=3" "rd.systemd.show_status=auto" "nvidia_drm.modeset=1" ];
+    initrd.kernelModules = [
+    "nvidia"
+    "nvidia_drm"
+];
+
+    #initrd.systemd.enable = true;
+    consoleLogLevel = 3;
+    initrd.verbose = false;
+    plymouth = {
+      enable = true;
+      theme = "lone";
+      themePackages = with pkgs; [
+        # By default we would install all themes
+        (adi1090x-plymouth-themes.override {
+          selected_themes = [ "lone" ];
+        })
+      ];
+    };
 
     loader = {
       systemd-boot.enable = true;
+      systemd-boot.configurationLimit = 5; #Keep the 5 last Generations
       efi.canTouchEfiVariables = true;
-    };
 
-    plymouth = {
-      enable = true;
-      theme = "spinfinity";
     };
   };
 
@@ -67,6 +87,7 @@
   # ⛷️ CPU & GPU Support
   # ─────────────────────────────────────────────────────────────────────────
   hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
   hardware.cpu.amd.updateMicrocode = true;
 
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -76,7 +97,7 @@
     powerManagement.finegrained = false;
     open = false;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.latest;
     nvidiaPersistenced = true;
   };
 
@@ -105,22 +126,36 @@
 
     # Disable KDE background services on boot
     scx.enable = true;
+    scx.scheduler = "scx_flash"; # default is "scx_rustland"
     printing.enable = false;
     blueman.enable = false;
 
     pipewire = {
       enable = true;
       wireplumber.enable = true;
-      alsa = {
-        enable = true;
-        support32Bit = true;
-      };
+      # Disable suspend of Toslink output to prevent audio popping.
+      wireplumber.extraConfig."99-disable-suspend" = {
+    "monitor.alsa.rules" = [
+      {
+        matches = [
+          {
+            "node.name" = "alsa_output.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00.analog-stereo-output";
+          }
+        ];
+        actions = {
+          update-props = {
+            "session.suspend-timeout-seconds" = 0;
+          };
+        };
+      }
+    ];
+  };
       pulse.enable = true;
-    };
+      };
+
   };
 
   systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
-  systemd.user.services."app-org.kde.kunifiedpush\x2ddistributor@autostart".enable = false;
 
   security.rtkit.enable = true;
 
@@ -130,7 +165,7 @@
   users.users.isolde = {
     isNormalUser = true;
     description = "isolde";
-    extraGroups = [ "networkmanager" "wheel" "audio" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "gamemode"];
     packages = with pkgs; [ kdePackages.kate ];
   };
 
@@ -152,23 +187,20 @@
       package = pkgs.appimage-run.override {
         extraPkgs = pkgs: [
           pkgs.icu
-          pkgs.libxcrypt-legacy
-          pkgs.python312
-          pkgs.python312Packages.torch
-          pkgs.cudaPackages.cudnn
-          pkgs.cudaPackages.cudatoolkit
-          pkgs.libGL
-          pkgs.python312Packages.torchvision
+          #pkgs.libxcrypt-legacy
+          #pkgs.python312
+          #pkgs.python312Packages.torch
+          #pkgs.cudaPackages.cudnn
+          #pkgs.cudaPackages.cudatoolkit
+          #pkgs.libGL
+          #pkgs.python312Packages.torchvision
         ];
       };
     };
 
     hyprland.enable = true;
-    hyprlock.enable = true;
+    firefox.enable = true;
     partition-manager.enable = true;
-
-    # Optional: disable firefox in favor of librewolf
-    firefox.enable = false;
   };
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -197,54 +229,61 @@
   # 🌬️ Environment Variables
   # ─────────────────────────────────────────────────────────────────────────
   environment.sessionVariables = {
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     KWIN_TRIPLE_BUFFER = "1";
     KWIN_COMPOSE = "O2";
-    KDE_NO_PRELOADING = "0";
     BALOO_DISABLE = "1";
     QT_QUICK_BACKEND = "opengl";
     KWIN_BACKEND = "vulkan";
     KWIN_LOW_LATENCY = "1";
-    MOZ_ENABLE_WAYLAND = "1";
-    NIXOS_OZONE_WL = "1";
+    #NIXOS_OZONE_WL = "1";
   };
 
   # ─────────────────────────────────────────────────────────────────────────
   # 📦 System Packages
   # ─────────────────────────────────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
-    lutris
-    bottles
-    kdePackages.plasma-workspace
-    kdePackages.kde-gtk-config
-    kdePackages.kwin
-    kdePackages.systemsettings
-    ryujinx
-    torzu
+   #kdePackages.plasma-workspace
+    #kdePackages.kde-gtk-config
+    #kdePackages.kwin
+    #kdePackages.systemsettings
+    #kdePackages.filelight
     git
     zip
     rar
-    firefox-wayland
-    cool-retro-term
     unzip
     toybox
-    librewolf
-    cudaPackages.cudnn
-    cudaPackages.cudatoolkit
-    python313Packages.torchvision
-    libGL
     vesktop
+    kitty
     gearlever
     easyeffects
     fragments
     fastfetch
     appimage-run
+    p3x-onenote
+
+    #Coding Stuff
+    cudaPackages.cudnn
+    cudaPackages.cudatoolkit
+    python313Packages.torchvision
+    python313
+    vscode-fhs
+    unityhub
+    dotnetCorePackages.dotnet_9.sdk
+
+
+    #gaming stuff
     winetricks
-    wineWowPackages.waylandFull
+    ryujinx
+    virt-manager
+    libGL
+    pciutils
+    bottles
+    lutris
     protontricks
-    kdePackages.filelight
+    wineWowPackages.staging
     calibre
     plymouth
+    inputs.Neve.packages.${pkgs.system}.default
     (pkgs.catppuccin-sddm.override {
       flavor = "mocha";
       font = "Noto Sans";
@@ -268,6 +307,7 @@
     korganizer
     khelpcenter
     akonadi
+    discover
   ];
 
   # ─────────────────────────────────────────────────────────────────────────

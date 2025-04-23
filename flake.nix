@@ -6,6 +6,7 @@
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     nix-gaming.url = "github:fufexan/nix-gaming";
+    Neve.url = "github:redyf/Neve";
     # home-manager, used for managing user configuration
     #home-manager = {
       #url = "github:nix-community/home-manager";
