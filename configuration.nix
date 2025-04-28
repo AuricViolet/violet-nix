@@ -42,9 +42,7 @@
     auto-optimise-store = true;
   };
 
-  services.flatpak.enable = true;
-
-  nix.gc = {
+nix.gc = {
     automatic = true;
     dates = "daily";
     options = "-d";
@@ -54,26 +52,12 @@
   # ❄️ Bootloader & Kernel Setup
   # ─────────────────────────────────────────────────────────────────────────
   boot = {
-    kernelPackages = pkgs.linuxPackages_cachyos;
+   kernelModules= ["nvidia" "nvidia-uvm"];
+   kernelPackages = pkgs.linuxPackages_cachyos;
     kernelParams = [ "quiet" "splash" "systemd.show_status=false" "boot.shell_on_fail" "udev.log_priority=3" "rd.systemd.show_status=auto" "nvidia_drm.modeset=1" ];
     initrd.kernelModules = [
     "nvidia"
-    "nvidia_drm"
 ];
-
-    #initrd.systemd.enable = true;
-    consoleLogLevel = 3;
-    initrd.verbose = false;
-    plymouth = {
-      enable = true;
-      theme = "lone";
-      themePackages = with pkgs; [
-        # By default we would install all themes
-        (adi1090x-plymouth-themes.override {
-          selected_themes = [ "lone" ];
-        })
-      ];
-    };
 
     loader = {
       systemd-boot.enable = true;
@@ -82,6 +66,7 @@
 
     };
   };
+systemd.network.wait-online.enable = false;
 
   # ─────────────────────────────────────────────────────────────────────────
   # ⛷️ CPU & GPU Support
@@ -97,8 +82,9 @@
     powerManagement.finegrained = false;
     open = false;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
-    nvidiaPersistenced = true;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
+    #nvidiaPersistenced = true;
+    forceFullCompositionPipeline = true;
   };
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -121,10 +107,8 @@
       sddm.wayland.enable = true;
       defaultSession = "plasma";
     };
-
     desktopManager.plasma6.enable = true;
 
-    # Disable KDE background services on boot
     scx.enable = true;
     scx.scheduler = "scx_flash"; # default is "scx_rustland"
     printing.enable = false;
@@ -165,7 +149,7 @@
   users.users.isolde = {
     isNormalUser = true;
     description = "isolde";
-    extraGroups = [ "networkmanager" "wheel" "audio" "gamemode"];
+    extraGroups = [ "networkmanager" "wheel" "audio" "gamemode" "video"];
     packages = with pkgs; [ kdePackages.kate ];
   };
 
@@ -181,26 +165,19 @@
   programs = {
     gamemode.enable = true;
     dconf.enable = true;
+    virt-manager.enable = true;
+
     appimage = {
       enable = true;
       binfmt = true;
       package = pkgs.appimage-run.override {
         extraPkgs = pkgs: [
           pkgs.icu
-          #pkgs.libxcrypt-legacy
-          #pkgs.python312
-          #pkgs.python312Packages.torch
-          #pkgs.cudaPackages.cudnn
-          #pkgs.cudaPackages.cudatoolkit
-          #pkgs.libGL
-          #pkgs.python312Packages.torchvision
+          pkgs.libxcrypt-legacy
         ];
       };
     };
-
-    hyprland.enable = true;
     firefox.enable = true;
-    partition-manager.enable = true;
   };
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -229,12 +206,8 @@
   # 🌬️ Environment Variables
   # ─────────────────────────────────────────────────────────────────────────
   environment.sessionVariables = {
-    KWIN_TRIPLE_BUFFER = "1";
-    KWIN_COMPOSE = "O2";
-    BALOO_DISABLE = "1";
-    QT_QUICK_BACKEND = "opengl";
-    KWIN_BACKEND = "vulkan";
     KWIN_LOW_LATENCY = "1";
+    XDG_CACHE_HOME = "/home/isolde/.cache";
     #NIXOS_OZONE_WL = "1";
   };
 
@@ -242,47 +215,39 @@
   # 📦 System Packages
   # ─────────────────────────────────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
-   #kdePackages.plasma-workspace
-    #kdePackages.kde-gtk-config
-    #kdePackages.kwin
-    #kdePackages.systemsettings
-    #kdePackages.filelight
+    gparted
     git
     zip
     rar
     unzip
     toybox
     vesktop
-    kitty
     gearlever
     easyeffects
     fragments
     fastfetch
     appimage-run
     p3x-onenote
+    moonlight-qt
+    ananicy-rules-cachyos
+    smartmontools
 
     #Coding Stuff
-    cudaPackages.cudnn
-    cudaPackages.cudatoolkit
-    python313Packages.torchvision
-    python313
+    obsidian
     vscode-fhs
     unityhub
     dotnetCorePackages.dotnet_9.sdk
-
+    godot_4_3
 
     #gaming stuff
-    winetricks
+
     ryujinx
-    virt-manager
-    libGL
-    pciutils
     bottles
     lutris
+    heroic
     protontricks
-    wineWowPackages.staging
+    wine
     calibre
-    plymouth
     inputs.Neve.packages.${pkgs.system}.default
     (pkgs.catppuccin-sddm.override {
       flavor = "mocha";
@@ -307,17 +272,16 @@
     korganizer
     khelpcenter
     akonadi
-    discover
   ];
 
   # ─────────────────────────────────────────────────────────────────────────
   # ❄️ Portal to other realms
   # ─────────────────────────────────────────────────────────────────────────
-  xdg.portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-  };
 
+security.sudo = {
+  enable = true;
+  wheelNeedsPassword = false;
+};
   # ─────────────────────────────────────────────────────────────────────────
   # Unfree packages allowed
   # ─────────────────────────────────────────────────────────────────────────
