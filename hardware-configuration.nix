@@ -8,33 +8,32 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "nvme" "usbhid" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/7e456397-5411-41da-b28b-45ea26c887ba";
+    { device = "/dev/disk/by-uuid/f7d5cc11-7bf5-4f21-bba9-62573fad1b66";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/0A1A-958C";
+    { device = "/dev/disk/by-uuid/9DEE-56D1";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
-  fileSystems."/mnt/Avalanche" = {
-  device = "/dev/disk/by-uuid/f53b3f33-9df9-4b04-9c44-7eb96dc6c8c1";
-  fsType = "ext4";
-  options = [ "defaults" "nofail" "rw"];  # 'nofail' allows boot even if it's missing
-};
+  fileSystems."/mnt/Avalanche" =
+    { device = "/dev/disk/by-uuid/776d3bad-d46a-46c4-9084-5a6edbd94bc2";
+      fsType = "ext4";
+    };
 
-fileSystems."/mnt/Blizzard" = {
-  device = "/dev/disk/by-uuid/25eecef6-e1c4-4911-8467-76530867aeed";
-  fsType = "ext4";
-  options = [ "defaults" "nofail" "rw"];  # 'nofail' allows boot even if it's missing
-};
+  fileSystems."/mnt/Blizzard" =
+    { device = "/dev/disk/by-uuid/25eecef6-e1c4-4911-8467-76530867aeed";
+      fsType = "ext4";
+    };
+
   swapDevices = [ ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
