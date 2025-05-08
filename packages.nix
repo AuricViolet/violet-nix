@@ -5,15 +5,16 @@
 {
 environment.systemPackages = with pkgs; [
     gparted
-    cacert
+    yazi
+    blender
+    cavalier
+    pinta
+    onlyoffice-desktopeditors
     git
     zip
     rar
     unzip
-    p7zip
-    wget
     pwvucontrol
-    toybox
     vesktop
     gearlever
     easyeffects
@@ -21,15 +22,13 @@ environment.systemPackages = with pkgs; [
     fastfetch
     appimage-run
     p3x-onenote
-    moonlight-qt
-    krita
-    cabextract
     ananicy-cpp
     ananicy-rules-cachyos
     #faudio
 
     #Coding Stuff
     obsidian
+    python310
     vscode-fhs
     unityhub
     dotnetCorePackages.dotnet_9.sdk
@@ -81,7 +80,7 @@ environment.systemPackages = with pkgs; [
 # ─────────────────────────────────────────────────────────────────────────};
  environment.sessionVariables = {
     KWIN_LOW_LATENCY = "1";
-    XDG_CACHE_HOME = "/home/isolde/.cache";
+    #XDG_CACHE_HOME = "/home/isolde/.cache";
     #NIXOS_OZONE_WL = "1";
   };
 
@@ -99,6 +98,7 @@ environment.systemPackages = with pkgs; [
     korganizer
     khelpcenter
     akonadi
+    baloo
   ];
 
 }
