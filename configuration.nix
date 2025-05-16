@@ -34,6 +34,8 @@
   i18n.defaultLocale = "en_CA.UTF-8";
   networking.hostName = "boreas";
   networking.networkmanager.enable = true;
+  virtualisation.podman.enable = true;
+  virtualisation.libvirtd.enable = true;
   system.autoUpgrade = {
     enable = true;
     allowReboot = false;
@@ -72,7 +74,7 @@ systemd.network.wait-online.enable = false;
   users.users.isolde = {
     isNormalUser = true;
     description = "isolde";
-    extraGroups = [ "networkmanager" "wheel" "audio" "gamemode" "video"];
+    extraGroups = [ "networkmanager" "wheel" "audio" "gamemode" "video" "kvm" "libvirtd"];
     packages = with pkgs; [ kdePackages.kate ];
   };
 
@@ -80,8 +82,10 @@ security.sudo = {
   enable = true;
   wheelNeedsPassword = false;
 };
+
   # ─────────────────────────────────────────────────────────────────────────
   # Unfree packages allowed
   # ─────────────────────────────────────────────────────────────────────────
   nixpkgs.config.allowUnfree = true;
+
 }

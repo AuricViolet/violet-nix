@@ -4,16 +4,22 @@
 { pkgs, config, inputs, neve, lib, ... }:
 {
 environment.systemPackages = with pkgs; [
-    gparted
-    yazi
+    kdePackages.qtmultimedia
+    moonlight-qt
+    thefuck
+    haruna
+    kdePackages.filelight
     blender
     cavalier
     pinta
     onlyoffice-desktopeditors
     git
+    python312
+    haruna
     zip
     rar
     unzip
+    krita
     pwvucontrol
     vesktop
     gearlever
@@ -24,7 +30,6 @@ environment.systemPackages = with pkgs; [
     p3x-onenote
     ananicy-cpp
     ananicy-rules-cachyos
-    #faudio
 
     #Coding Stuff
     obsidian
@@ -32,7 +37,6 @@ environment.systemPackages = with pkgs; [
     vscode-fhs
     unityhub
     dotnetCorePackages.dotnet_9.sdk
-    godot_4_3
 
     #gaming stuff
     ryujinx
@@ -43,7 +47,6 @@ environment.systemPackages = with pkgs; [
     winetricks
     wineWowPackages.stable
     calibre
-    inputs.Neve.packages.${pkgs.system}.default
     (pkgs.catppuccin-sddm.override {
       flavor = "mocha";
       font = "Noto Sans";
@@ -61,8 +64,7 @@ environment.systemPackages = with pkgs; [
   programs = {
     gamemode.enable = true;
     dconf.enable = true;
-    virt-manager.enable = true;
-
+    partition-manager.enable = true;
     appimage = {
       enable = true;
       binfmt = true;
@@ -70,6 +72,12 @@ environment.systemPackages = with pkgs; [
         extraPkgs = pkgs: [
           pkgs.icu
           pkgs.libxcrypt-legacy
+          pkgs.python312
+          pkgs.python312Packages.torch
+          pkgs.cudaPackages.cudnn
+          pkgs.cudaPackages.cudatoolkit
+          pkgs.libGL
+          pkgs.python312Packages.torchvision
         ];
       };
     };
@@ -80,6 +88,11 @@ environment.systemPackages = with pkgs; [
 # ─────────────────────────────────────────────────────────────────────────};
  environment.sessionVariables = {
     KWIN_LOW_LATENCY = "1";
+    KWIN_TRIPLE_BUFFER = "1";
+    KWIN_COMPOSE = "O2";
+    KDE_NO_PRELOADING = "0";
+    BALOO_DISABLE = "1";
+    MOZ_ENABLE_WAYLAND = "1";
     #XDG_CACHE_HOME = "/home/isolde/.cache";
     #NIXOS_OZONE_WL = "1";
   };

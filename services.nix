@@ -7,6 +7,8 @@ security.rtkit.enable = true;
     displayManager = {
       sddm.enable = true;
       sddm.theme = "catppuccin-mocha";
+      #sddm.package = lib.mkForce pkgs.kdePackages.sddm;
+      #sddm.extraPackages = [pkgs.sddm-astronaut];
       sddm.wayland.enable = true;
       defaultSession = "plasma";
     };
