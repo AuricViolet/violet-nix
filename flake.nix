@@ -6,7 +6,8 @@
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     nix-gaming.url = "github:fufexan/nix-gaming";
-    Neve.url = "github:redyf/Neve";
+    #Neve.url = "github:redyf/Neve";
+    #nixified-ai.url = "github:matthewcroughan/nixified-ai";
     #home-manager, used for managing user configuration
     #home-manager = {
       ##inputs.nixpkgs.follows = "nixpkgs";
@@ -22,6 +23,7 @@
       modules = [
         ./configuration.nix
         chaotic.nixosModules.default # OUR DEFAULT MODULE
+        #nixified-ai.nixosModules.comfyui
         #home-manager.nixosModules.home-manager
         #{
           #home-manager.useGlobalPkgs = true;

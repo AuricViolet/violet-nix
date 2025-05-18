@@ -3,17 +3,23 @@
 # ─────────────────────────────────────────────────────────────────────────
 { pkgs, config, inputs, neve, lib, ... }:
 {
+
+
 environment.systemPackages = with pkgs; [
     kdePackages.qtmultimedia
     moonlight-qt
+    steam-run
     thefuck
     haruna
     kdePackages.filelight
     blender
     cavalier
     pinta
+    python310Packages.certifi
+    cacert
     onlyoffice-desktopeditors
     git
+    icu
     python312
     haruna
     zip
@@ -72,12 +78,19 @@ environment.systemPackages = with pkgs; [
         extraPkgs = pkgs: [
           pkgs.icu
           pkgs.libxcrypt-legacy
-          pkgs.python312
-          pkgs.python312Packages.torch
-          pkgs.cudaPackages.cudnn
-          pkgs.cudaPackages.cudatoolkit
+          pkgs.glibc
           pkgs.libGL
-          pkgs.python312Packages.torchvision
+          pkgs.python310Packages.certifi
+          pkgs.cacert
+          pkgs.zlib
+          pkgs.mesa
+          pkgs.libffi
+          pkgs.expat
+          pkgs.fontconfig
+          pkgs.freetype
+          pkgs.vulkan-loader
+          pkgs.xdg-utils
+          pkgs.wayland
         ];
       };
     };
