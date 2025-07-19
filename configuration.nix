@@ -74,8 +74,11 @@ systemd.network.wait-online.enable = false;
   users.users.isolde = {
     isNormalUser = true;
     description = "isolde";
-    extraGroups = [ "networkmanager" "wheel" "audio" "gamemode" "video" "kvm" "libvirtd"];
-    packages = with pkgs; [ kdePackages.kate ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "audio" "gamemode" "video" "kvm" "libvirtd"];
+    packages = with pkgs; [
+    kdePackages.kate
+    kdePackages.filelight
+    ];
   };
 
 security.sudo = {
