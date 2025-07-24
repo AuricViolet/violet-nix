@@ -3,8 +3,9 @@
 {
 
 security.rtkit.enable = true;
-  services = {
-    libinput.enable = true;
+services = {
+  xserver.enable = true;
+  libinput.enable = true;
     displayManager = {
       sddm.enable = true;
       sddm.theme = "catppuccin-mocha";

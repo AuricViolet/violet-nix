@@ -15,8 +15,6 @@
     open = false;
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.beta;
-    #nvidiaPersistenced = true;
-    #forceFullCompositionPipeline = true;
   };
 
 services.ananicy.enable = true;

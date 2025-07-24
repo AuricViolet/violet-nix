@@ -8,10 +8,11 @@
 environment.systemPackages = with pkgs; [
     vesktop
     kdePackages.wacomtablet
+    kdePackages.wayland-protocols
+    kdePackages.wayland
     libwacom
     haruna
     pinta
-    onlyoffice-desktopeditors
     git
     gh
     github-desktop
@@ -66,6 +67,7 @@ environment.systemPackages = with pkgs; [
   programs = {
     gamemode.enable = true;
     dconf.enable = true;
+    xwayland.enable =true;
     partition-manager.enable = true;
     appimage = {
       enable = true;
@@ -86,8 +88,10 @@ environment.systemPackages = with pkgs; [
  environment.sessionVariables = {
     KWIN_LOW_LATENCY = "1";
     KDE_NO_PRELOADING = "0";
-    MOZ_ENABLE_WAYLAND = "1";
     __GL_MaxFramesAllowed = "1";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    __GL_THREADED_OPTIMIZATIONS = "1";
     #XDG_CACHE_HOME = "/home/isolde/.cache";
   };
 
@@ -111,12 +115,12 @@ environment.systemPackages = with pkgs; [
     xwaylandvideobridge
   ];
 
-  virtualisation = {
-    docker = {
-      enable = true;
-      autoPrune.enable = true;
-      enableOnBoot = true;
-    };
-  };
+  #virtualisation = {
+    #docker = {
+      #enable = true;
+      #autoPrune.enable = true;
+      #enableOnBoot = true;
+    #};
+  #};
 
 }
