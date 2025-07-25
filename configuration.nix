@@ -34,8 +34,6 @@
   i18n.defaultLocale = "en_CA.UTF-8";
   networking.hostName = "boreas";
   networking.networkmanager.enable = true;
-  virtualisation.podman.enable = true;
-  virtualisation.libvirtd.enable = true;
   system.autoUpgrade = {
     enable = true;
     allowReboot = false;
@@ -48,6 +46,7 @@
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
   };
+nix.optimise.automatic =true;
 
 nix.gc = {
     automatic = true;
@@ -66,8 +65,6 @@ nix.gc = {
     hybrid-sleep.enable = false;
   };
 systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
-systemd.network.wait-online.enable = false;
-
   #──────────────────────────────────────────────────────────────────────────
   # 🧊 User Setup: isolde
   # ─────────────────────────────────────────────────────────────────────────
@@ -78,6 +75,7 @@ systemd.network.wait-online.enable = false;
     packages = with pkgs; [
     kdePackages.kate
     kdePackages.filelight
+    kdePackages.sddm-kcm
     ];
   };
 

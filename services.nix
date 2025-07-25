@@ -4,7 +4,6 @@
 
 security.rtkit.enable = true;
 services = {
-  xserver.enable = true;
   libinput.enable = true;
     displayManager = {
       sddm.enable = true;
