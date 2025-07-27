@@ -29,13 +29,13 @@
   # ─────────────────────────────────────────────────────────────────────────
   # 🐧 Core System Settings
   # ─────────────────────────────────────────────────────────────────────────
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
   time.timeZone = "America/Halifax";
   i18n.defaultLocale = "en_CA.UTF-8";
   networking.hostName = "boreas";
   networking.networkmanager.enable = true;
   system.autoUpgrade = {
-    enable = true;
+    enable = false;
     allowReboot = false;
   };
 
@@ -45,9 +45,15 @@
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
+    substituters = [
+        "https://cache.nixos.org/"
+        "https://nix-community.cachix.org"
+      ];
+      trusted-public-keys = [
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      ];
   };
 nix.optimise.automatic =true;
-
 nix.gc = {
     automatic = true;
     dates = "daily";
@@ -75,7 +81,6 @@ systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
     packages = with pkgs; [
     kdePackages.kate
     kdePackages.filelight
-    kdePackages.sddm-kcm
     ];
   };
 

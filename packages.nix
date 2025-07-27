@@ -7,6 +7,7 @@
 environment.systemPackages = with pkgs; [
     vesktop
     kdePackages.wacomtablet
+    kdePackages.sddm-kcm
     libwacom
     haruna
     pinta
@@ -20,8 +21,11 @@ environment.systemPackages = with pkgs; [
     fastfetch
     appimage-run
     p3x-onenote
+    cudatoolkit
     fragments
     (blender.override { cudaSupport = true; })
+
+
 
     #Coding Stuff
     godot-mono
@@ -43,12 +47,12 @@ environment.systemPackages = with pkgs; [
       loginBackground = true;
     })
   ];
-   programs.steam = {
+  programs = {
+    steam = {
     enable = true;
     extraCompatPackages = [ pkgs.proton-ge-bin ];
-  };
-
-  programs = {
+    };
+    xwayland.enable = true;
     firefox.enable = true;
     dconf.enable = true;
     partition-manager.enable = true;
@@ -71,6 +75,7 @@ environment.systemPackages = with pkgs; [
     KWIN_LOW_LATENCY = "1";
     KDE_NO_PRELOADING = "0";
     MOZ_ENABLE_WAYLAND= "1";
+    NIXOS_OZONE_WL = "1";
     #XDG_CACHE_HOME = "/home/isolde/.cache";
   };
 

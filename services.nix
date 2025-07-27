@@ -4,6 +4,8 @@
 
 security.rtkit.enable = true;
 services = {
+  openssh.enable = true;
+  xserver.enable = true;
   libinput.enable = true;
     displayManager = {
       sddm.enable = true;

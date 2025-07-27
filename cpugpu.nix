@@ -20,5 +20,5 @@ services.ananicy.enable = true;
 services.ananicy.package = pkgs.ananicy-cpp;
 services.ananicy.rulesProvider = pkgs.ananicy-rules-cachyos;
 
-system.stateVersion = "24.11";
+system.stateVersion = "25.05";
 }

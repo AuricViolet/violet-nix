@@ -6,19 +6,35 @@
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     nix-gaming.url = "github:fufexan/nix-gaming";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+     plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+      };
     };
 
 
-  outputs = { self, nixpkgs, chaotic, ... }@inputs: {
+
+  outputs = { self, nixpkgs, chaotic, home-manager, plasma-manager, ... }@inputs: {
     # use "nixos", or your hostname as the name of the configuration
     # it's a better practice than "default" shown in the video
    nixosConfigurations.boreas = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = {inherit inputs;};
       modules = [
         ./configuration.nix
-        chaotic.nixosModules.default # OUR DEFAULT MODULE
+        chaotic.nixosModules.default
+        home-manager.nixosModules.home-manager{
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.sharedModules = [ plasma-manager.homeManagerModules.plasma-manager ];
+          home-manager.users.isolde = import ./home.nix;
+        }
       ];
+        specialArgs = {inherit inputs;};
     };
   };
 }
