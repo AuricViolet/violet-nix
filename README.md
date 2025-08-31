@@ -27,9 +27,9 @@ Includes the following:
   <li>Cachix</li>
   <li>Home-manager</li>
   <li>Plasma-manager</li>
+  <li>Nixvim</li>
   <li>Spicetify w/ adblock & addons</li>
   <li>Pipewire Low Latency audio (1ms) w/ idle disabled</li>
-  <li>Proton-GE integration with steam from https://github.com/fufexan/nix-gaming</li>
   <li>Nvidia based wayland and KDE performance tweaks</li>
   <li>Garbage collection and nix store optimizations</li>
   <!-- add dev flakes for different ENVs -->
