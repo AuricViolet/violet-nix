@@ -16,6 +16,7 @@
     ./boot.nix
     ./services.nix
     ./spicetify.nix
+    ./nixvim.nix
   ];
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -37,7 +38,23 @@
   system.autoUpgrade = {
     enable = false;
     allowReboot = false;
-  };
+     };
+  security.pam.loginLimits = [
+  {
+    domain = "@audio";  # applies to all users in the audio group
+    type = "-";
+    item = "rtprio";
+    value = "95";
+  }
+  {
+    domain = "@audio";
+    type = "-";
+    item = "memlock";
+    value = "unlimited";
+  }
+];
+
+
 
   # ─────────────────────────────────────────────────────────────────────────
   # ❄️ Flake magic & nix settings
@@ -53,13 +70,12 @@
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
   };
-nix.optimise.automatic =true;
-nix.gc = {
-    automatic = true;
-    dates = "daily";
-    options = "-d";
-  };
-
+  nix.optimise.automatic =true;
+    nix.gc = {
+      automatic = true;
+      dates = "daily";
+      options = "-d";
+    };
 
   # ─────────────────────────────────────────────────────────────────────────
   # ❄️ Suspend/Sleep
@@ -70,12 +86,13 @@ nix.gc = {
     hibernate.enable = false;
     hybrid-sleep.enable = false;
   };
-systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
+    systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
   #──────────────────────────────────────────────────────────────────────────
   # 🧊 User Setup: isolde
   # ─────────────────────────────────────────────────────────────────────────
   users.users.isolde = {
     isNormalUser = true;
+    #hashedPasswordFile
     description = "isolde";
     extraGroups = [ "networkmanager" "wheel" "docker" "audio" "gamemode" "video" "kvm" "libvirtd"];
     packages = with pkgs; [

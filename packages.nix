@@ -1,14 +1,14 @@
 # ─────────────────────────────────────────────────────────────────────────
 # 📦 System Packages
 # ─────────────────────────────────────────────────────────────────────────
-{ pkgs, config, inputs, lib, ... }:
+{ pkgs, config, inputs, lib, nixvim, ... }:
 {
 
 environment.systemPackages = with pkgs; [
     vesktop
     kdePackages.wacomtablet
     kdePackages.sddm-kcm
-    libwacom
+    reaper
     haruna
     pinta
     git
@@ -23,21 +23,27 @@ environment.systemPackages = with pkgs; [
     p3x-onenote
     cudatoolkit
     fragments
+    lutris
+    kdePackages.kdialog
     (blender.override { cudaSupport = true; })
-
 
 
     #Coding Stuff
     godot-mono
     vscode-fhs
-    dotnetCorePackages.sdk_9_0_3xx
+    dotnetCorePackages.sdk_9_0-bin
     blender
+    krita
     audacity
+    yabridge
+    yabridgectl
+    protonup-qt
 
     #gaming stuff
     protontricks
     winetricks
-    wineWowPackages.stable
+    distrobox
+    wineWowPackages.yabridge
     calibre
     (pkgs.catppuccin-sddm.override {
       flavor = "mocha";
@@ -48,6 +54,7 @@ environment.systemPackages = with pkgs; [
     })
   ];
   programs = {
+    nixvim.enable = true;
     steam = {
     enable = true;
     extraCompatPackages = [ pkgs.proton-ge-bin ];
@@ -98,13 +105,11 @@ environment.systemPackages = with pkgs; [
     elisa
     xwaylandvideobridge
   ];
-
-  #virtualisation = {
-    #docker = {
-      #enable = true;
+  virtualisation.podman = {
+      enable = true;
+      dockerCompat = true;
       #autoPrune.enable = true;
       #enableOnBoot = true;
-    #};
-  #};
+    };
 
 }
