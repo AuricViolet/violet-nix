@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, spicetify-nix, lib, chaotic, nix-gaming, neve, ... }:
+{ config, pkgs, inputs, spicetify-nix, lib, chaotic, nix-gaming, ... }:
 
 {
  # ─────────────────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, lib, chaotic, nix-gaming, ... }:
+{ config, pkgs, inputs, lib, chaotic, ... }:
 
 {
 

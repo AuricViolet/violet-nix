@@ -7,7 +7,7 @@
    kernel.sysctl."vm.swappiness" = 10;
    kernelModules= ["nvidia" "nvidia_modeset" "nvidia-uvm" "nvidia-drm"];
    kernelPackages = pkgs.linuxPackages_cachyos;
-   kernelParams = [ "amd_iommu=on" "quiet" "splash" "systemd.show_status=false" "boot.shell_on_fail" "udev.log_priority=3" "rd.systemd.show_status=auto" "nvidia_drm.modeset=1" "preempt=full" ];
+   kernelParams = ["quiet" "splash" "systemd.show_status=false" "boot.shell_on_fail" "udev.log_priority=3" "rd.systemd.show_status=auto" "nvidia_drm.modeset=1" "preempt=full" ];
    initrd.systemd.enable = true;
 
     loader = {

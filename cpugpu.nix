@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────────────────────────────────
 # ⛷️ CPU & GPU Support
 # ─────────────────────────────────────────────────────────────────────────
-{config,pkgs, ... }:
+{config,pkgs,lib, ... }:
 {
   powerManagement.cpuFreqGovernor = "performance";
   hardware.graphics.enable = true;

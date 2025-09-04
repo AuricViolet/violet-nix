@@ -2,7 +2,7 @@
 # ❄️ Cozy NixOS: Winter Wonderland Config ❄️
 # ───────────────────────────────────────────────────────────────────────────
 
-{ config, pkgs, inputs, spicetify-nix, lib, chaotic, nix-gaming, neve, ... }:
+{ config, pkgs, inputs, spicetify-nix, lib, chaotic, ... }:
 
 {
   # ─────────────────────────────────────────────────────────────────────────
@@ -16,7 +16,7 @@
     ./boot.nix
     ./services.nix
     ./spicetify.nix
-    ./nixvim.nix
+    ./nvf.nix
   ];
 
   # ─────────────────────────────────────────────────────────────────────────

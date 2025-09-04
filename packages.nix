@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────────────────────────────────
 # 📦 System Packages
 # ─────────────────────────────────────────────────────────────────────────
-{ pkgs, config, inputs, lib, nixvim, ... }:
+{ pkgs, config, inputs, lib, nvf, ... }:
 {
 
 environment.systemPackages = with pkgs; [
@@ -31,7 +31,7 @@ environment.systemPackages = with pkgs; [
     #Coding Stuff
     godot-mono
     vscode-fhs
-    dotnetCorePackages.sdk_9_0-bin
+    dotnetCorePackages.sdk_8_0-bin
     blender
     krita
     audacity
@@ -54,7 +54,9 @@ environment.systemPackages = with pkgs; [
     })
   ];
   programs = {
-    nixvim.enable = true;
+    neovim.enable = true;
+    gamescope.enable = true;
+    gamemode.enable = true;
     steam = {
     enable = true;
     extraCompatPackages = [ pkgs.proton-ge-bin ];
