@@ -27,7 +27,7 @@ Includes the following:
   <li>Cachix</li>
   <li>Home-manager</li>
   <li>Plasma-manager</li>
-  <li>Nixvim</li>
+  <li>Nvf - WIP </li>
   <li>Spicetify w/ adblock & addons</li>
   <li>Pipewire Low Latency audio (1ms) w/ idle disabled</li>
   <li>Nvidia based wayland and KDE performance tweaks</li>
