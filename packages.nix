@@ -5,15 +5,22 @@
 {
 
 environment.systemPackages = with pkgs; [
-    vesktop
+    btop
+    libva-utils
+    hyprutils
+    hyprpolkitagent
+    nvidia-vaapi-driver
+    hyprland-qt-support
+    egl-wayland
+    oreo-cursors-plus
+    grimblast
+    fluffychat
     kdePackages.wacomtablet
     kdePackages.sddm-kcm
     reaper
     haruna
-    pinta
     git
     github-desktop
-    haruna
     rar
     pwvucontrol
     gearlever
@@ -23,26 +30,25 @@ environment.systemPackages = with pkgs; [
     p3x-onenote
     cudatoolkit
     fragments
-    lutris
-    kdePackages.kdialog
+    yabridge
+    yabridgectl
+    krita
     (blender.override { cudaSupport = true; })
 
 
     #Coding Stuff
+    dotnetCorePackages.sdk_9_0
     godot-mono
     vscode-fhs
-    dotnetCorePackages.sdk_8_0-bin
     blender
-    krita
     audacity
-    yabridge
-    yabridgectl
-    protonup-qt
+    distrobox
 
     #gaming stuff
     protontricks
+
     winetricks
-    distrobox
+    protonup-qt
     wineWowPackages.yabridge
     calibre
     (pkgs.catppuccin-sddm.override {
@@ -54,7 +60,11 @@ environment.systemPackages = with pkgs; [
     })
   ];
   programs = {
-    neovim.enable = true;
+    hyprland = {
+      enable = true;
+    };
+    yazi.enable = true;
+    virt-manager.enable = true;
     gamescope.enable = true;
     gamemode.enable = true;
     steam = {
@@ -79,12 +89,17 @@ environment.systemPackages = with pkgs; [
 };
 # ─────────────────────────────────────────────────────────────────────────
 # 🌬️ Environment Variables
-# ─────────────────────────────────────────────────────────────────────────};
+# ─────────────────────────────────────────────────────────────────────────
  environment.sessionVariables = {
     KWIN_LOW_LATENCY = "1";
     KDE_NO_PRELOADING = "0";
     MOZ_ENABLE_WAYLAND= "1";
-    NIXOS_OZONE_WL = "1";
+    GBM_BACKEND = "nvidia-drm";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    #NIXOS_OZONE_WL = "1";
+    LIBVA_DRIVER_NAME = "nvidia";
+
+
     #XDG_CACHE_HOME = "/home/isolde/.cache";
   };
 
@@ -100,6 +115,7 @@ environment.systemPackages = with pkgs; [
     liberation_ttf
     noto-fonts
     corefonts
+    nerd-fonts.mononoki
     ];
   };
 
@@ -107,6 +123,10 @@ environment.systemPackages = with pkgs; [
     elisa
     xwaylandvideobridge
   ];
+  nixpkgs.config.android_sdk.accept_license = true;
+  virtualisation.libvirtd = {
+  enable = true;
+  };
   virtualisation.podman = {
       enable = true;
       dockerCompat = true;

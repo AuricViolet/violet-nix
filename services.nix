@@ -1,9 +1,13 @@
+# ─────────────────────────────────────────────────────────────────────────
+# ⚙️ Services
+# ─────────────────────────────────────────────────────────────────────────
 { config, pkgs, inputs, lib, chaotic, ... }:
-
 {
-
 security.rtkit.enable = true;
+services.gnome.gnome-keyring.enable = true;
+xdg.portal.wlr.enable = true;
 services = {
+  dbus.enable = true;
   openssh.enable = true;
   xserver.enable = true;
   libinput.enable = true;

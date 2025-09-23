@@ -19,7 +19,7 @@
       marketplace
     ];
     enabledSnippets = with spicePkgs.snippets; [ pointer ];
-    theme = spicePkgs.themes.catppuccin;
-    colorScheme = "mocha";
+    #theme = spicePkgs.themes.catppuccin;
+    #colorScheme = "mocha";
   };
 }

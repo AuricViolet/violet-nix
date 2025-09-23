@@ -9,14 +9,15 @@
   # 🧊 Glacier Imports
   # ─────────────────────────────────────────────────────────────────────────
   imports = [
-    ./hardware-configuration.nix
-    inputs.spicetify-nix.nixosModules.default
-    ./packages.nix
-    ./cpugpu.nix
-    ./boot.nix
-    ./services.nix
-    ./spicetify.nix
-    ./nvf.nix
+    ./hardware-configuration.nix #hardware specific config including filesystem mounts, should rebuild this each new install with nixos-generate-config
+    inputs.spicetify-nix.nixosModules.default #not sure if this needs to be here or not.
+    ./packages.nix #packages
+    ./cpugpu.nix #cpu/gpu specific configs
+    ./boot.nix #boot configuration
+    ./services.nix #services and system options
+    ./spicetify.nix #spicetify client with adblock
+    ./nvf.nix #nvf for neovim
+    ./stylix.nix
   ];
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -24,13 +25,14 @@
   # ─────────────────────────────────────────────────────────────────────────
   swapDevices = [{
     device = "/swapfile";
-    size = 16 * 1024;
+    size = 16 * 1024; #creates a 16gb swapfile, to help the OS not crash if RAM fills up.
+   
   }];
 
   # ─────────────────────────────────────────────────────────────────────────
   # 🐧 Core System Settings
   # ─────────────────────────────────────────────────────────────────────────
-  system.stateVersion = "25.05";
+  system.stateVersion = "25.05"; 
   time.timeZone = "America/Halifax";
   i18n.defaultLocale = "en_CA.UTF-8";
   networking.hostName = "boreas";
@@ -39,39 +41,25 @@
     enable = false;
     allowReboot = false;
      };
-  security.pam.loginLimits = [
-  {
-    domain = "@audio";  # applies to all users in the audio group
-    type = "-";
-    item = "rtprio";
-    value = "95";
-  }
-  {
-    domain = "@audio";
-    type = "-";
-    item = "memlock";
-    value = "unlimited";
-  }
-];
-
 
 
   # ─────────────────────────────────────────────────────────────────────────
   # ❄️ Flake magic & nix settings
   # ─────────────────────────────────────────────────────────────────────────
   nix.settings = {
+    download-buffer-size = 536870912;
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
     substituters = [
         "https://cache.nixos.org/"
         "https://nix-community.cachix.org"
-      ];
+      ]; #2 caches to fetch from, this speeds up build time.
       trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
   };
-  nix.optimise.automatic =true;
-    nix.gc = {
+  nix.optimise.automatic =true; #helps the store stay optimized and saves on storage space
+    nix.gc = { #garbage collection
       automatic = true;
       dates = "daily";
       options = "-d";
@@ -80,13 +68,13 @@
   # ─────────────────────────────────────────────────────────────────────────
   # ❄️ Suspend/Sleep
   # ─────────────────────────────────────────────────────────────────────────
-  systemd.targets = {
+  systemd.targets = { #stops the system from sleeping and suspending 
     sleep.enable = false;
     suspend.enable = false;
     hibernate.enable = false;
     hybrid-sleep.enable = false;
   };
-    systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
+    #systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
   #──────────────────────────────────────────────────────────────────────────
   # 🧊 User Setup: isolde
   # ─────────────────────────────────────────────────────────────────────────
@@ -94,17 +82,15 @@
     isNormalUser = true;
     #hashedPasswordFile
     description = "isolde";
-    extraGroups = [ "networkmanager" "wheel" "docker" "audio" "gamemode" "video" "kvm" "libvirtd"];
+    extraGroups = [ "networkmanager" "wheel" "docker" "audio" "gamemode" "video"];
     packages = with pkgs; [
     kdePackages.kate
     kdePackages.filelight
     ];
   };
+   security.sudo.wheelNeedsPassword = false;
 
-security.sudo = {
-  enable = true;
-  wheelNeedsPassword = false;
-};
+
 
 #─────────────────────────────────────────────────────────────────────────
   # Unfree packages allowed
