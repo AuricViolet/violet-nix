@@ -1,4 +1,4 @@
-{ config, pkgs, stylix, ... }:
+{ config, pkgs, stylix, home-manager, ... }:
 {
 
   home.stateVersion = "25.05"; # Your Home Manager state version
@@ -11,7 +11,6 @@
   hyprpaper
   waybar
   vesktop
-  kitty
   ];
   home.sessionVariables = {
     XDG_CURRENT_DESKTOP = "Hyprland";
@@ -53,7 +52,7 @@
       disable_hyprland_logo = true;
       disable_splash_rendering = true;
     };
-     exec-once = [
+     exec-once = [        ""
       "mako"
       "waybar"
       "vesktop"
@@ -72,15 +71,15 @@
 
         "$mod, F, fullscreen"
         "$mod, T, exec, kitty"
-        "$mod, R, exec, wofi --show drun"
+        "$mod, R, exec, wofi --show drun --allow-images"
         "$mod, B,  togglefloating,"
         "$mod, E, exec, kitty yazi"
         "$mod, Q, killactive,"
 
-        "$mod SHIFT, D, resizeactive, -10 0"
-        "$mod SHIFT, S, resizeactive, 10 0"
-        "$mod SHIFT, A, resizeactive, 0 -10"
-        "$mod SHIFT, W, resizeactive, 0 10"
+        "$mod SHIFT, A, resizeactive, -10 0"
+        "$mod SHIFT, D, resizeactive, 10 0"
+        "$mod SHIFT, W, resizeactive, 0 -10"
+        "$mod SHIFT, S, resizeactive, 0 10"
 
         ", Print, exec, grimblast copy area"
       ]
@@ -105,22 +104,27 @@
 
   #plasma manager stuff for kde6
   programs = {
+    kitty = {
+      enable = true;
+      settings = {
+        confirm_os_window_close = "0";
+    };
+  };
     waybar.enable = true;
     waybar.settings =
     {
     mainBar = {
       layer = "top";
       position = "top";
-      height = 30;
+      height = 20;
       modules-left = ["cpu" "network" "temperature"];
-      modules-center = [ "hyprland/workspaces" ];
-      modules-right = ["pulseaudio/slider" "pulseaudio" "clock"];
+      modules-center = [ "workspaces" ];
+      modules-right = ["pulseaudio" "clock"];
 
 
 
 
     };
-  };
     #shell & startup
     bash.enable = true;
     bash.bashrcExtra = "fastfetch --logo /etc/nixos/avatar.png";

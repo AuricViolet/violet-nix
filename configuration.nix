@@ -18,6 +18,7 @@
     ./spicetify.nix #spicetify client with adblock
     ./nvf.nix #nvf for neovim
     ./stylix.nix
+    #./hyprland.nix
   ];
 
   # ─────────────────────────────────────────────────────────────────────────
