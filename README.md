@@ -23,14 +23,16 @@
 Includes the following:
 <ul>
   <li>Wayland with xorg compatibility through xWayland </li>
-  <li>CachyOS Kernel w/ Ananicy rules from https://www.nyx.chaotic.cx/</li>
+  <li>CachyOS Kernel w/ Ananicy rules + CachyOS proton from https://www.nyx.chaotic.cx/</li>
   <li>Cachix</li>
   <li>Home-manager</li>
   <li>Plasma-manager</li>
   <li>Nvf - WIP </li>
+  <li>Hyprland and KDE Plasma</li>
   <li>Spicetify w/ adblock & addons</li>
   <li>Pipewire Low Latency audio (1ms) w/ idle disabled</li>
-  <li>Nvidia based wayland and KDE performance tweaks</li>
-  <li>Garbage collection and nix store optimizations</li>
+  <li>Nvidia based wayland performance tweaks</li>
+  <li>Automatic garbage collection and nix store optimizations</li>
+  
   <!-- add dev flakes for different ENVs -->
 </ul>
