@@ -5,18 +5,19 @@
 {
 
 environment.systemPackages = with pkgs; [
-    btop
-    libva-utils
+    mission-center
+    grimblast
+    vesktop
+    pciutils
     hyprutils
+    hyprgraphics
     hyprpolkitagent
-    nvidia-vaapi-driver
-    hyprland-qt-support
+    gamemode
     egl-wayland
     oreo-cursors-plus
-    grimblast
-    fluffychat
     kdePackages.wacomtablet
     kdePackages.sddm-kcm
+    kdePackages.dolphin
     reaper
     haruna
     git
@@ -28,7 +29,6 @@ environment.systemPackages = with pkgs; [
     fastfetch
     appimage-run
     p3x-onenote
-    cudatoolkit
     fragments
     yabridge
     yabridgectl
@@ -60,16 +60,17 @@ environment.systemPackages = with pkgs; [
     })
   ];
   programs = {
-    hyprland = {
-      enable = true;
-    };
-    yazi.enable = true;
+    hyprland.enable = true;
+    #yazi.enable = true;
     virt-manager.enable = true;
     gamescope.enable = true;
     gamemode.enable = true;
     steam = {
     enable = true;
     extraCompatPackages = [ pkgs.proton-ge-bin ];
+    gamescopeSession = {
+        enable = true;
+      };
     };
     xwayland.enable = true;
     firefox.enable = true;
@@ -96,11 +97,8 @@ environment.systemPackages = with pkgs; [
     MOZ_ENABLE_WAYLAND= "1";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    #NIXOS_OZONE_WL = "1";
+    NIXOS_OZONE_WL = "1";
     LIBVA_DRIVER_NAME = "nvidia";
-
-
-    #XDG_CACHE_HOME = "/home/isolde/.cache";
   };
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -123,15 +121,13 @@ environment.systemPackages = with pkgs; [
     elisa
     xwaylandvideobridge
   ];
-  nixpkgs.config.android_sdk.accept_license = true;
   virtualisation.libvirtd = {
   enable = true;
   };
+
   virtualisation.podman = {
       enable = true;
       dockerCompat = true;
-      #autoPrune.enable = true;
-      #enableOnBoot = true;
     };
 
 }

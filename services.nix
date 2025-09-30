@@ -6,7 +6,17 @@
 security.rtkit.enable = true;
 services.gnome.gnome-keyring.enable = true;
 xdg.portal.wlr.enable = true;
+xdg.portal.enable = true;
 services = {
+  xserver.xrandrHeads = [
+  {
+  output = "DP-1";
+  primary = true;
+  }
+  {
+  output = "DVI-D-1";
+  }
+];
   dbus.enable = true;
   openssh.enable = true;
   xserver.enable = true;

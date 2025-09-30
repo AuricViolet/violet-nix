@@ -83,12 +83,13 @@
     isNormalUser = true;
     #hashedPasswordFile
     description = "isolde";
-    extraGroups = [ "networkmanager" "wheel" "docker" "audio" "gamemode" "video"];
+    extraGroups = [ "networkmanager" "wheel" "docker" "audio" "gamemode" "video" "libvirtd"];
     packages = with pkgs; [
     kdePackages.kate
     kdePackages.filelight
     ];
   };
+   users.users."qemu-libvirtd".extraGroups = [ "render" ];
    security.sudo.wheelNeedsPassword = false;
 
 
