@@ -7,6 +7,8 @@
 environment.systemPackages = with pkgs; [
     mission-center
     grimblast
+    gst_all_1.gstreamer
+    mpvpaper
     vesktop
     pciutils
     hyprutils
@@ -33,7 +35,8 @@ environment.systemPackages = with pkgs; [
     yabridge
     yabridgectl
     krita
-    (blender.override { cudaSupport = true; })
+    blender
+    #(blender.override { cudaSupport = true; })
 
 
     #Coding Stuff
@@ -43,17 +46,23 @@ environment.systemPackages = with pkgs; [
     blender
     audacity
     distrobox
+    wf-recorder
+    libnotify
+    slurp
+    wl-clipboard
+    cliphist
 
     #gaming stuff
     protontricks
-
     winetricks
     protonup-qt
     wineWowPackages.yabridge
     calibre
+    sddm-astronaut
     (pkgs.catppuccin-sddm.override {
       flavor = "mocha";
-      font = "Noto Sans";
+      accent = "mauve";
+      font  = "Noto Sans";
       fontSize = "9";
       background = "${./wallpaper.png}";
       loginBackground = true;

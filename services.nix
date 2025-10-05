@@ -23,9 +23,11 @@ services = {
   libinput.enable = true;
     displayManager = {
       sddm.enable = true;
-      sddm.theme = "catppuccin-mocha";
+      #sddm.theme = "sddm-astronaut";
+      sddm.theme = "catppuccin-mocha-mauve";
       sddm.wayland.enable = true;
-      defaultSession = "plasma";
+      defaultSession = "hyprland";
+
     };
     desktopManager.plasma6.enable = true;
     printing.enable = false;

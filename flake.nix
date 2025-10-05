@@ -27,15 +27,13 @@
 
 
   outputs = { self, nixpkgs, chaotic, home-manager, plasma-manager, nvf, stylix, ... }@inputs: {
-    # use "nixos", or your hostname as the name of the configuration
-    # it's a better practice than "default" shown in the video
    nixosConfigurations.boreas = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
+        inputs.stylix.nixosModules.stylix
         nvf.nixosModules.default
         ./configuration.nix
         chaotic.nixosModules.default
-        inputs.stylix.nixosModules.stylix
         home-manager.nixosModules.home-manager{
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;

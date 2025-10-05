@@ -5,7 +5,7 @@
 
   # Example of installing packages:
   home.packages = with pkgs; [
-    wofi
+    #wofi
     hyprpaper
     waybar
     cava
@@ -41,7 +41,6 @@
       after_sleep_cmd = "hyprctl dispatch dpms on";
       ignore_dbus_inhibit = false;
       lock_cmd = "hyprlock";
-      on-resume = "waybar";
     };
     listener = [
       {
@@ -57,7 +56,7 @@
     };
   };
   services.hyprpaper = {
-    enable = true;
+    enable = false;
     settings = {
       ipc = "on";
       splash = false;
@@ -115,6 +114,8 @@
         "mako"
         "waybar"
         "vesktop"
+        "wl-paste --watch cliphist store"
+        ''mpvpaper ALL -o "no-audio --loop-file='inf'" /home/isolde/Videos/window.mp4''
       ];
 
       bindm = [
@@ -131,11 +132,12 @@
 
           "$mod, F, fullscreen"
           "$mod, T, exec, kitty"
-          "$mod, R, exec, wofi --show drun --allow-images"
+          "$mod, R, exec, wofi --show drun -e --allow-images -H 300 -W 300"
           "$mod, B, togglefloating,"
-          "$mod, E, exec, kitty yazi"
+          "$mod, E, exec, dolphin"
           "$mod, Q, killactive,"
           "$mod, L, exec, hyprlock"
+          "$mod, H, exec, cliphist list | wofi -S dmenu | cliphist decode | wl-copy"
 
           "$mod SHIFT, A, resizeactive, -30 0"
           "$mod SHIFT, D, resizeactive, 30 0"
@@ -143,6 +145,8 @@
           "$mod SHIFT, S, resizeactive, 0 30"
 
           ", Print, exec, grimblast copy area -f"
+          "$mod, Print, exec, notify-send '🎥 Recording started' && wf-recorder -f ~/Videos/WFrecorder/recording-$(date +'%Y-%m-%d_%H-%M-%S').mp4 -r 60 -g \"$(slurp)\" -c h264_nvenc"
+  "$mod SHIFT, Print, exec, notify-send '✅ Recording stopped' && pkill -INT wf-recorder"
         ]
         ++ (
           builtins.concatLists (builtins.genList (i:
@@ -195,6 +199,46 @@ programs = {
     };
   };
 };
+    wofi.enable = true;
+    wofi.settings = {
+      prompt = "";
+    };
+    wofi.style = ''
+    window {
+      border-radius: 12px;
+      border: 5px solid #cba6f7;
+      background-color: rgba(30, 30, 46, 0.95);
+      color: #cdd6f4;
+    }
+    #outer-box {
+      border-radius: 12px;
+      border: 5px solid #cba6f7;
+      background-color: rgba(30, 30, 46, 0.95);
+      color: #cdd6f4;
+    }
+
+    #entry,
+    #input {
+      border-radius: 8px;
+      background-color: rgba(30, 30, 46, 0.95);
+      border: 2px solid #b4befe;
+    }
+    
+
+    #input {
+      margin: 5px;
+      border: 1px solid #cba6f7;
+      padding: 5px;
+      background-color: rgba(49, 50, 68, 0.8);
+      color: #cdd6f4;
+    }
+
+    #entry:selected {
+      background-color: rgba(203, 166, 247, 0.3);
+      border-radius: 6px;
+    }
+    '';
+    
     kitty = {
       enable = true;
       settings = {
@@ -204,31 +248,40 @@ programs = {
     waybar.enable = true;
     waybar.settings = {
       mainBar = {
+        spacing = 5;
         layer = "top";
         position = "top";
-        height = 20;
-        modules-left = [ "network" ];
-        modules-center = [ "hyprland/workspaces"  ];
+        height = 25;
+        modules-left = [ "image" "network" ];
+        modules-center = [ "hyprland/workspaces" ];
         modules-right = [  "pulseaudio" "cava" "clock" ];
         persistent-workspaces = {
             "DP-1" = 1;
             "DVI-D-1" = 2;
           };
-        "clock#time" = {
-          format = "{:%p:%M}";
+          
+        "clock"= {
+          format = "{:%I:%M %p}";
+          tooltip-format = "{:%A, %B %d, %Y}";
         };
         "network"= {
           interface = "wlo1";
           format = "{ifname}";
-          format-wifi = "{essid} ({signalStrength}%) ";
+          format-wifi = " ";
           format-disconnected =  "";
           tooltip-format-wifi = "{essid} ({signalStrength}%) ";
           tooltip-format-disconnected = "Disconnected";
-          max-length = 50;
+          max-length = 25;
           on-click = "exec kitty nmtui";
+        };
+        "image"= {
+          path = "/home/isolde/nixos/avatar.png";
+          size = 25;
+          on-click = "exec wofi --show drun -e -w 2 --allow-images -H 300 -W 300";
         };
         "cava"= {
           framerate = 60;
+          on-click = "exec easyeffects";
           bars = 14;
           hide_on_silence = false;
           method = "pipewire";
@@ -236,10 +289,59 @@ programs = {
           bar_delimiter = 0;
           monstercat = true;
           format-icons = ["▁" "▂" "▃" "▄" "▅" "▆" "▇" "█"];
+          };
         };
         };
-      };
+        waybar.style = ''
+          #workspaces button {
+            font-size: 7px;
+            padding: 0 2px;   
+            border-radius: 6px;
+            min-height: 0;
+            margin: 0;
+          }
 
+         #workspaces button label {
+              padding: 0;
+              margin: 0;
+              min-height: 0;
+              color: #11111b;
+          }
+
+        #network {
+          background: rgba(203, 166, 247, 0.75);
+          border-radius: 6px;
+          padding: 0 10px;
+          color: #11111b;
+          }
+
+        #image {
+          border-radius: 6px;
+          margin: 0 3px;
+        }
+
+        #pulseaudio,
+        #clock, 
+        #cava,
+        #workspaces {
+          background: rgba(203, 166, 247, 0.75);
+          border-radius: 6px;
+          color: #11111b;
+          padding: 0 3px;
+          min-height: 0;
+        }
+
+        #workspaces button.visible {
+          color: #11111b;        
+        }
+        
+        #workspaces button.active {
+          color: #cdd6f4;
+        }
+        #workspaces button.urgent {
+          color: #f38ba8;
+        }
+      '';
     # Shell & startup
     bash.enable = true;
     bash.bashrcExtra = "fastfetch --logo /etc/nixos/avatar.png";
