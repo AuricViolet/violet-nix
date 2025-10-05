@@ -23,7 +23,7 @@
 Includes the following:
 <ul>
   <li>Wayland with xorg compatibility through xWayland </li>
-  <li><s>CachyOS Kernel w/ Ananicy rules + CachyOS proton from https://www.nyx.chaotic.cx/</s> linuxpam won't build, reverted to latest kernel</li>
+  <li><s>CachyOS Kernel w/ Ananicy rules + CachyOS proton from https://www.nyx.chaotic.cx/</s> nvidia module broken upstream, reverted to latest kernel</li>
   <li>Cachix</li>
   <li>Home-manager</li>
   <li>Plasma-manager</li>
