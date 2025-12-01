@@ -10,11 +10,11 @@ xdg.portal.enable = true;
 services = {
   xserver.xrandrHeads = [
   {
-  output = "DP-1";
+  output = "DP-3";
   primary = true;
   }
   {
-  output = "DVI-D-1";
+  output = "HDMI-A-1";
   }
 ];
   dbus.enable = true;

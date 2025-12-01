@@ -10,6 +10,7 @@ environment.systemPackages = with pkgs; [
     gst_all_1.gstreamer
     mpvpaper
     vesktop
+    kdePackages.spectacle
     pciutils
     hyprutils
     hyprgraphics
@@ -24,6 +25,7 @@ environment.systemPackages = with pkgs; [
     haruna
     git
     github-desktop
+    gnome-keyring # needed for hyprland?
     rar
     pwvucontrol
     gearlever
@@ -35,8 +37,6 @@ environment.systemPackages = with pkgs; [
     yabridge
     yabridgectl
     krita
-    blender
-    #(blender.override { cudaSupport = true; })
 
 
     #Coding Stuff
@@ -104,10 +104,8 @@ environment.systemPackages = with pkgs; [
     KWIN_LOW_LATENCY = "1";
     KDE_NO_PRELOADING = "0";
     MOZ_ENABLE_WAYLAND= "1";
-    GBM_BACKEND = "nvidia-drm";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     NIXOS_OZONE_WL = "1";
-    LIBVA_DRIVER_NAME = "nvidia";
+    STEAM_FORCE_WAYLAND = "0";
   };
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -128,15 +126,14 @@ environment.systemPackages = with pkgs; [
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     elisa
-    xwaylandvideobridge
   ];
-  virtualisation.libvirtd = {
-  enable = true;
-  };
+  #virtualisation.libvirtd = {
+  #enable = true;
+  #};
 
-  virtualisation.podman = {
-      enable = true;
-      dockerCompat = true;
-    };
+  #virtualisation.podman = {
+      #enable = true;
+      #dockerCompat = true;
+    #};
 
 }

@@ -24,11 +24,12 @@
   # ─────────────────────────────────────────────────────────────────────────
   # 🧤 Swapfile Setup (16GB)
   # ─────────────────────────────────────────────────────────────────────────
-  swapDevices = [{
-    device = "/swapfile";
-    size = 16 * 1024; #creates a 16gb swapfile, to help the OS not crash if RAM fills up.
+  zramSwap.enable = true;
+  #swapDevices = [{
+    #device = "/swapfile";
+    #size = 16 * 1024; #creates a 16gb swapfile, to help the OS not crash if RAM fills up.
    
-  }];
+  #}];
 
   # ─────────────────────────────────────────────────────────────────────────
   # 🐧 Core System Settings
@@ -83,13 +84,12 @@
     isNormalUser = true;
     #hashedPasswordFile
     description = "isolde";
-    extraGroups = [ "networkmanager" "wheel" "docker" "audio" "gamemode" "video" "libvirtd"];
+    extraGroups = [ "networkmanager" "wheel" "docker" "audio" "gamemode" "video"];
     packages = with pkgs; [
     kdePackages.kate
     kdePackages.filelight
     ];
   };
-   users.users."qemu-libvirtd".extraGroups = [ "render" ];
    security.sudo.wheelNeedsPassword = false;
 
 

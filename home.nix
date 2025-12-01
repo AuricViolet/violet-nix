@@ -3,7 +3,6 @@
   home.stateVersion = "25.05"; # Your Home Manager state version
   home.username = "isolde";    # your user
 
-  # Example of installing packages:
   home.packages = with pkgs; [
     #wofi
     hyprpaper
@@ -14,8 +13,6 @@
   home.sessionVariables = {
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
-    WLR_DRM_DEVICES = "$HOME/.config/hypr/card";
-    AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card2";
     XDG_MENU_PREFIX = "plasma-";
   };
 
@@ -86,8 +83,8 @@
 
 
       monitor = [
-        "DP-1,2560x1440@180,0x0,1"
-        "DVI-D-1,1920x1080@144,2560x250,1"
+        "DP-3,2560x1440@180,0x0,1"
+        "HDMI-A-1,1920x1080@60,2560x0,1,transform,3"
       ];
 
       misc = {
@@ -97,17 +94,17 @@
       };
 
        workspace = [
-      "1,monitor:DP-1,default:true"
-      "2,monitor:DP-1"
-      "3,monitor:DP-1"
-      "4,monitor:DP-1"
-      "5,monitor:DP-1"
+      "1,monitor:DP-3,default:true"
+      "2,monitor:DP-3"
+      "3,monitor:DP-3"
+      "4,monitor:DP-3"
+      "5,monitor:DP-3"
 
-      "6,monitor:DVI-D-1,default:true"
-      "7,monitor:DVI-D-1"
-      "8,monitor:DVI-D-1"
-      "9,monitor:DVI-D-1"
-      "10,monitor:DVI-D-1"
+      "6,monitor:HDMI-A-1,default:true"
+      "7,monitor:HDMI-A-1"
+      "8,monitor:HDMI-A-1"
+      "9,monitor:HDMI-A-1"
+      "10,monitor:HDMI-A-1"
     ];
 
       exec-once = [
@@ -115,7 +112,7 @@
         "waybar"
         "vesktop"
         "wl-paste --watch cliphist store"
-        ''mpvpaper ALL -o "no-audio --loop-file='inf'" /home/isolde/Videos/window.mp4''
+        ''mpvpaper ALL -o "no-audio --loop-file=inf --panscan=1 --video-unscaled=no" /etc/nixos/window.mp4''
       ];
 
       bindm = [
@@ -174,7 +171,7 @@ programs = {
         ignore_empty_input = true;
     };
     background = {
-      path = "/home/isolde/Pictures/walls/druid.jpg";
+      path = "/etc/nixos/druid.jpg";
       blur_passes = 1;
       blur_size = 8;
     };
@@ -275,7 +272,7 @@ programs = {
           on-click = "exec kitty nmtui";
         };
         "image"= {
-          path = "/home/isolde/nixos/avatar.png";
+          path = "/etc/nixos/avatar.png";
           size = 25;
           on-click = "exec wofi --show drun -e -w 2 --allow-images -H 300 -W 300";
         };
@@ -355,7 +352,6 @@ programs = {
       };
 
       workspace = {
-        wallpaperSlideShow = "/home/isolde/Pictures/walls/walls-catppuccin-mocha/";
         theme = "breeze-dark";
         iconTheme = "ColorFlow";
         #cursor.theme = "oreo_spark_violet_cursors";
@@ -372,8 +368,6 @@ programs = {
       };
 
       kscreenlocker.timeout = 900;
-      kscreenlocker.appearance.wallpaperSlideShow.path =
-        "/home/isolde/Pictures/walls/walls-catppuccin-mocha/";
     };
   };
 }

@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
-    chaotic.url = "github:chaotic-cx/nyx/4cf82d519584e8420b32aa1ca48379987bbe4b2d";
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     nvf = {
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";

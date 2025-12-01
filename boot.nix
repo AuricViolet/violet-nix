@@ -4,11 +4,10 @@
   # ❄️ Bootloader & Kernel Setup
   # ─────────────────────────────────────────────────────────────────────────
   boot = {
-   tmp.tmpfsHugeMemoryPages = "always";
    kernel.sysctl."vm.swappiness" = 10;
-   kernelModules= ["nvidia" "nvidia_modeset" "nvidia-uvm" "nvidia-drm" "amd_iommu=on"];
-   kernelPackages = pkgs.linuxPackages_latest;
-   kernelParams = ["quiet" "splash" "systemd.show_status=false" "boot.shell_on_fail" "udev.log_priority=3" "rd.systemd.show_status=auto" "nvidia_drm.modeset=1" "preempt=full" ];
+   kernelModules= ["amdgpu" "amd_iommu=on"];
+   kernelPackages = pkgs.linuxPackages_cachyos;
+   kernelParams = ["quiet" "splash" "systemd.show_status=false" "boot.shell_on_fail" "udev.log_priority=3" "rd.systemd.show_status=auto" "preempt=full"];
    initrd.systemd.enable = true;
     loader = {
       systemd-boot.enable = true;
