@@ -4,18 +4,19 @@
   home.username = "isolde";    # your user
 
   home.packages = with pkgs; [
-    #wofi
     hyprpaper
     waybar
     cava
+    nautilus
+    wofi
   ];
 
   home.sessionVariables = {
-    XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
-    XDG_MENU_PREFIX = "plasma-";
+    XDG_SESSION_TYPE = "wayland";
+    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
   };
-
+  xdg.enable = true;
   services.network-manager-applet.enable = true;
   services.mako.enable = true;
   services.mako.settings = {
@@ -75,13 +76,20 @@
     };
 
     plugins = [
-      pkgs.hyprlandPlugins.hyprfocus
+      pkgs.hyprland-protocols
     ];
 
     settings = {
       "$mod" = "SUPER";
 
-
+      general = {
+        gaps_out = 10;
+        allow_tearing = true;
+      };
+      input = {
+        follow_mouse = 2;
+      };
+      
       monitor = [
         "DP-3,2560x1440@180,0x0,1"
         "HDMI-A-1,1920x1080@60,2560x0,1,transform,3"
@@ -89,8 +97,13 @@
 
       misc = {
         key_press_enables_dpms = true;
+        mouse_move_enables_dpms = true;
         disable_hyprland_logo = true;
         disable_splash_rendering = true;
+        render_unfocused_fps = 180;
+      };
+      render = {
+        direct_scanout = 2;
       };
 
        workspace = [
@@ -108,7 +121,9 @@
     ];
 
       exec-once = [
+        "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "mako"
+        "easyeffects --gapplication-service"
         "waybar"
         "vesktop"
         "wl-paste --watch cliphist store"
@@ -122,6 +137,8 @@
 
       bind =
         [
+          "ALT, Tab, cyclenext"
+          "ALT, Tab, bringactivetotop"
           "$mod, A, movewindow, l"
           "$mod, D, movewindow, r"
           "$mod, W, movewindow, u"
@@ -129,21 +146,20 @@
 
           "$mod, F, fullscreen"
           "$mod, T, exec, kitty"
-          "$mod, R, exec, wofi --show drun -e --allow-images -H 300 -W 300"
+          "$mod, R, exec, fuzzel -w 30 -y 12 -f ''Roboto''-15 --line-height=20 "
           "$mod, B, togglefloating,"
-          "$mod, E, exec, dolphin"
+          "$mod, E, exec, nautilus"
           "$mod, Q, killactive,"
           "$mod, L, exec, hyprlock"
-          "$mod, H, exec, cliphist list | wofi -S dmenu | cliphist decode | wl-copy"
-
+          "$mod, H, exec, cliphist list | wofi| cliphist decode | wl-copy"
           "$mod SHIFT, A, resizeactive, -30 0"
           "$mod SHIFT, D, resizeactive, 30 0"
           "$mod SHIFT, W, resizeactive, 0 -30"
           "$mod SHIFT, S, resizeactive, 0 30"
 
           ", Print, exec, grimblast copy area -f"
-          "$mod, Print, exec, notify-send '🎥 Recording started' && wf-recorder -f ~/Videos/WFrecorder/recording-$(date +'%Y-%m-%d_%H-%M-%S').mp4 -r 60 -g \"$(slurp)\" -c h264_nvenc"
-  "$mod SHIFT, Print, exec, notify-send '✅ Recording stopped' && pkill -INT wf-recorder"
+          "$mod, Print, exec, notify-send '🎥 Recording started' && wf-recorder -a -f ~/Videos/WFrecorder/recording-$(date +'%Y-%m-%d_%H-%M-%S').mp4 -r 60 -g \"$(slurp)\" -c h264_vaapi -d /dev/dri/renderD128"
+          "$mod SHIFT, Print, exec, notify-send '✅ Recording stopped' && pkill -INT wf-recorder"
         ]
         ++ (
           builtins.concatLists (builtins.genList (i:
@@ -158,8 +174,15 @@
   };
 
 programs = {
-  yazi = {
+  fuzzel = {
     enable = true;
+    settings = {
+      main = {
+        font = lib.mkForce "mononoki Nerd Font:size=15";
+        icon-theme = "kora";
+        icons-enabled = true;
+      }; 
+    };
   };
 
 
@@ -171,12 +194,12 @@ programs = {
         ignore_empty_input = true;
     };
     background = {
-      path = "/etc/nixos/druid.jpg";
+      path = "/etc/nixos/wallpaper.png";
       blur_passes = 1;
       blur_size = 8;
     };
     label = {
-      monitor = "DP-1";
+      monitor = "DP-3";
       text = "❄ $TIME ❄";
       font_size = 90;
       font_family = "monospace";
@@ -189,53 +212,13 @@ programs = {
 
     input-field = {
       size = "400, 70";
-      monitor = "DP-1";
+      monitor = "DP-3";
       shadow_passes = 2;
       outline_thickness = 5;
       rounding = 1;
     };
   };
 };
-    wofi.enable = true;
-    wofi.settings = {
-      prompt = "";
-    };
-    wofi.style = ''
-    window {
-      border-radius: 12px;
-      border: 5px solid #cba6f7;
-      background-color: rgba(30, 30, 46, 0.95);
-      color: #cdd6f4;
-    }
-    #outer-box {
-      border-radius: 12px;
-      border: 5px solid #cba6f7;
-      background-color: rgba(30, 30, 46, 0.95);
-      color: #cdd6f4;
-    }
-
-    #entry,
-    #input {
-      border-radius: 8px;
-      background-color: rgba(30, 30, 46, 0.95);
-      border: 2px solid #b4befe;
-    }
-    
-
-    #input {
-      margin: 5px;
-      border: 1px solid #cba6f7;
-      padding: 5px;
-      background-color: rgba(49, 50, 68, 0.8);
-      color: #cdd6f4;
-    }
-
-    #entry:selected {
-      background-color: rgba(203, 166, 247, 0.3);
-      border-radius: 6px;
-    }
-    '';
-    
     kitty = {
       enable = true;
       settings = {
@@ -253,8 +236,8 @@ programs = {
         modules-center = [ "hyprland/workspaces" ];
         modules-right = [  "pulseaudio" "cava" "clock" ];
         persistent-workspaces = {
-            "DP-1" = 1;
-            "DVI-D-1" = 2;
+            "DP-3" = 1;
+            "HDMI-A-1" = 2;
           };
           
         "clock"= {
@@ -262,7 +245,7 @@ programs = {
           tooltip-format = "{:%A, %B %d, %Y}";
         };
         "network"= {
-          interface = "wlo1";
+          interface = "wlp10s0";
           format = "{ifname}";
           format-wifi = " ";
           format-disconnected =  "";
@@ -274,7 +257,7 @@ programs = {
         "image"= {
           path = "/etc/nixos/avatar.png";
           size = 25;
-          on-click = "exec wofi --show drun -e -w 2 --allow-images -H 300 -W 300";
+          on-click = "exec fuzzel -w 30 -y 12 -f ''Roboto''-15 --line-height=20";
         };
         "cava"= {
           framerate = 60;
@@ -290,6 +273,13 @@ programs = {
         };
         };
         waybar.style = ''
+          window#waybar {
+            background-color: rgba(17, 17, 27, 0.75);
+          }
+
+          *{
+            font-family: mononoki;
+          }
           #workspaces button {
             font-size: 7px;
             padding: 0 2px;   
@@ -297,46 +287,27 @@ programs = {
             min-height: 0;
             margin: 0;
           }
-
          #workspaces button label {
               padding: 0;
               margin: 0;
               min-height: 0;
-              color: #11111b;
+              color: rgba(203, 166, 247, 0.75);
           }
-
-        #network {
-          background: rgba(203, 166, 247, 0.75);
-          border-radius: 6px;
-          padding: 0 10px;
-          color: #11111b;
-          }
-
         #image {
           border-radius: 6px;
           margin: 0 3px;
         }
-
         #pulseaudio,
-        #clock, 
+        #clock,
         #cava,
+        #network { 
+          color: rgba(203, 166, 247, 0.75);
+        }
         #workspaces {
-          background: rgba(203, 166, 247, 0.75);
-          border-radius: 6px;
-          color: #11111b;
-          padding: 0 3px;
+          border-radius: 1px;
+          color: rgba(203, 166, 247, 0.75);
+          padding: 0 1px;
           min-height: 0;
-        }
-
-        #workspaces button.visible {
-          color: #11111b;        
-        }
-        
-        #workspaces button.active {
-          color: #cdd6f4;
-        }
-        #workspaces button.urgent {
-          color: #f38ba8;
         }
       '';
     # Shell & startup
@@ -344,6 +315,8 @@ programs = {
     bash.bashrcExtra = "fastfetch --logo /etc/nixos/avatar.png";
 
     # Plasma Manager Config
+
+
     plasma = {
       powerdevil.AC = {
         powerProfile = "performance";
@@ -353,7 +326,7 @@ programs = {
 
       workspace = {
         theme = "breeze-dark";
-        iconTheme = "ColorFlow";
+        iconTheme = "kora";
         #cursor.theme = "oreo_spark_violet_cursors";
         #cursor.size = "32";
         lookAndFeel = "Catppuccin.Mocha";
@@ -370,4 +343,11 @@ programs = {
       kscreenlocker.timeout = 900;
     };
   };
+    gtk = {
+    enable = true;
+    iconTheme = {
+      name = "kora";
+    package = pkgs.kora-icon-theme;
+  };
+    };
 }

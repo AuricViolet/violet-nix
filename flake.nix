@@ -2,9 +2,8 @@
   description = "Nixos config flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     nvf = {
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,14 +25,14 @@
 
 
 
-  outputs = { self, nixpkgs, chaotic, home-manager, plasma-manager, nvf, stylix, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, plasma-manager, nvf, stylix,
+ ... }@inputs: {
    nixosConfigurations.boreas = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         inputs.stylix.nixosModules.stylix
         nvf.nixosModules.default
         ./configuration.nix
-        chaotic.nixosModules.default
         home-manager.nixosModules.home-manager{
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
