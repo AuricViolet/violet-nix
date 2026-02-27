@@ -1,12 +1,9 @@
-{ config, pkgs, inputs, lib, nix-gaming, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 { # ─────────────────────────────────────────────────────────────────────────
   # ❄️ Bootloader & Kernel Setup
   # ─────────────────────────────────────────────────────────────────────────
   boot = {
-    extraModprobeConfig = ''
-  options cfg80211 ieee80211_regdom="CA"
-'';
    kernel.sysctl."vm.swappiness" = 10;
    kernelModules= ["amdgpu" "amd_iommu=on"];
    kernelPackages = pkgs.linuxPackages_latest;
