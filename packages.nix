@@ -7,7 +7,6 @@
 environment.systemPackages = with pkgs; [
     mission-center
     grimblast
-    gst_all_1.gstreamer
     mpvpaper
     vesktop
     kdePackages.spectacle
@@ -28,14 +27,11 @@ environment.systemPackages = with pkgs; [
     gnome-keyring # needed for hyprland?
     rar
     pwvucontrol
-    gearlever
     easyeffects
     fastfetch
     appimage-run
     p3x-onenote
     fragments
-    yabridge
-    yabridgectl
     krita
 
 
@@ -44,8 +40,6 @@ environment.systemPackages = with pkgs; [
     godot-mono
     vscode-fhs
     blender
-    audacity
-    distrobox
     wf-recorder
     libnotify
     slurp
@@ -56,9 +50,6 @@ environment.systemPackages = with pkgs; [
     protontricks
     winetricks
     protonup-qt
-    wineWowPackages.yabridge
-    calibre
-    sddm-astronaut
     (pkgs.catppuccin-sddm.override {
       flavor = "mocha";
       accent = "mauve";
@@ -70,8 +61,6 @@ environment.systemPackages = with pkgs; [
   ];
   programs = {
     hyprland.enable = true;
-    #yazi.enable = true;
-    virt-manager.enable = true;
     gamescope.enable = true;
     gamemode.enable = true;
     steam = {
