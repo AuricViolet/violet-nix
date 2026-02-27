@@ -25,7 +25,7 @@
 
 
 
-  outputs = { self, nixpkgs, home-manager, plasma-manager, nvf, stylix,
+  outputs = { self, nixpkgs, home-manager, plasma-manager,spicetify-nix, nvf, stylix,
  ... }@inputs: {
    nixosConfigurations.boreas = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
