@@ -23,18 +23,18 @@
 Includes the following:
 <ul>
   <li>Wayland with xorg compatibility through xWayland </li>
-  <li>CachyOS Kernel w/ Sched-ext & Ananicy rules + CachyOS proton from https://www.nyx.chaotic.cx/</li>
-  <li>Cachix</li>
+  <li>Latest kernel w/ Sched-ext & Ananicy rules + CachyOS proton </li>
+  <li>Cachix setup for quick builds</li>
   <li>Home-manager</li>
   <li>Plasma-manager</li>
   <li>Nvf/Nixvim? - WIP </li>
   <li>Hyprland and KDE Plasma</li>
-  <li>Waybar, Wofi, Cliphist, MPVpaper,  </li>
-  <li>Stylix Integration</li> 
+  <li>Waybar, Fuzzel, Cliphist, MPVpaper </li>
+  <li>Stylix Integration for system themeing</li> 
   <li>Spicetify w/ adblock & addons</li>
-  <li>Pipewire Low Latency audio (1ms) w/ idle disabled</li>
-  <li>Nvidia based wayland performance tweaks</li>
+  <li>Pipewire Low Latency audio</li>
   <li>Automatic garbage collection and nix store optimizations</li>
   <li> Dev flakes for C# </li>
+  <li> AMDGPU configurations </li>
   <!-- add dev flakes for different ENVs -->
 </ul>
