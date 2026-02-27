@@ -1,6 +1,6 @@
 { config, lib,  pkgs, stylix, home-manager, ... }:
 {
-  home.stateVersion = "25.05"; # Your Home Manager state version
+  home.stateVersion = "25.11"; # Your Home Manager state version
   home.username = "isolde";    # your user
 
   home.packages = with pkgs; [
