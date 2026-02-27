@@ -6,13 +6,6 @@
   powerManagement.cpuFreqGovernor = "performance";
   hardware.graphics = {
   enable = true;
-  extraPackages = with pkgs; [
-    mesa
-    libva
-    libva-utils
-    libvdpau-va-gl
-    libva-vdpau-driver
-  ];
 };
   hardware.graphics.enable32Bit = true;
   hardware.cpu.amd.updateMicrocode = true;
@@ -25,5 +18,5 @@ services.ananicy.enable = true;
 services.ananicy.package = pkgs.ananicy-cpp;
 services.ananicy.rulesProvider = pkgs.ananicy-rules-cachyos;
 
-system.stateVersion = "25.05";
+system.stateVersion = "25.11";
 }
