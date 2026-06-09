@@ -2,18 +2,16 @@
   description = "Nixos config flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
-    nvf = {
-      url = "github:notashelf/nvf";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixvim.url = "github:nix-community/nixvim";
     stylix = {
-      url = "github:nix-community/stylix";
+      url = "github:nix-community/stylix/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/master";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
      plasma-manager = {
@@ -25,13 +23,13 @@
 
 
 
-  outputs = { self, nixpkgs, home-manager, plasma-manager,spicetify-nix, nvf, stylix,
+  outputs = { self, nixpkgs,nixpkgs-unstable, home-manager, plasma-manager,spicetify-nix,nixvim, stylix,
  ... }@inputs: {
    nixosConfigurations.boreas = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         inputs.stylix.nixosModules.stylix
-        nvf.nixosModules.default
+        nixvim.nixosModules.nixvim
         ./configuration.nix
         home-manager.nixosModules.home-manager{
           home-manager.useGlobalPkgs = true;
@@ -46,7 +44,13 @@
           };
         }
       ];
-        specialArgs = {inherit inputs;};
+    specialArgs = {
+      inherit inputs;
+      nixpkgs-unstable = import inputs.nixpkgs-unstable {
+      system = "x86_64-linux";
+      config.allowUnfree = true;
+  };
+};
     };
   };
 }

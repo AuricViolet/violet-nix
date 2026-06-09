@@ -1,9 +1,6 @@
 { config, pkgs, inputs, spicetify-nix, lib, chaotic, nix-gaming, ... }:
 
 {
- # ─────────────────────────────────────────────────────────────────────────
-  # 🧁 Spicetify
-  # ─────────────────────────────────────────────────────────────────────────
   programs.spicetify = let
     spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
   in {

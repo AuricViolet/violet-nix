@@ -1,17 +1,17 @@
 { config, pkgs, inputs, lib, ... }:
 
-{ # ─────────────────────────────────────────────────────────────────────────
-  # ❄️ Bootloader & Kernel Setup
-  # ─────────────────────────────────────────────────────────────────────────
+{ 
   boot = {
    kernel.sysctl."vm.swappiness" = 10;
-   kernelModules= ["amdgpu" "amd_iommu=on"];
+   kernelModules= ["amdgpu"];
    kernelPackages = pkgs.linuxPackages_latest;
-   kernelParams = ["quiet" "splash" "systemd.show_status=false" "boot.shell_on_fail" "udev.log_priority=3" "rd.systemd.show_status=auto" "preempt=full"];
+   kernelParams = ["boot.shell_on_fail" "udev.log_priority=3" "rd.systemd.show_status=auto" "preempt=full"];
    initrd.systemd.enable = true;
     loader = {
-      systemd-boot.enable = true;
-      systemd-boot.configurationLimit = 5; #Keep the 5 last Generations
+      systemd-boot.enable = false;
+      limine.enable = true;
+      #systemd-boot.consoleMode = "max";
+      limine.maxGenerations = 3;
       efi.canTouchEfiVariables = true;
     };
 };

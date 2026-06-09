@@ -1,13 +1,6 @@
-# ───────────────────────────────────────────────────────────────────────────
-# ❄️ Cozy NixOS: Winter Wonderland Config ❄️
-# ───────────────────────────────────────────────────────────────────────────
-
 { config, pkgs, inputs, spicetify-nix, lib, ... }:
 
 {
-  # ─────────────────────────────────────────────────────────────────────────
-  # 🧊 Glacier Imports
-  # ─────────────────────────────────────────────────────────────────────────
   imports = [
     ./hardware-configuration.nix #hardware specific config including filesystem mounts, should rebuild this each new install with nixos-generate-config
     inputs.spicetify-nix.nixosModules.default #not sure if this needs to be here or not.
@@ -16,30 +9,13 @@
     ./boot.nix #boot configuration
     ./services.nix #services and system options
     ./spicetify.nix #spicetify client with adblock
-    ./nvf.nix #nvf for neovim
     ./stylix.nix
-    #./hyprland.nix
+    ./nixvim.nix
   ];
 
-  # ─────────────────────────────────────────────────────────────────────────
-  # 🧤 Filesystem / Partitioning
-  # ─────────────────────────────────────────────────────────────────────────
   zramSwap.enable = true;
-networking.networkmanager.wifi.backend = "iwd";
-fileSystems."/mnt/Winter" = {
-  device = "UUID=97c75fb5-81e2-48c8-8110-a25b4e787b0f";
-  fsType = "ext4";
-  options = [ "noatime" "defaults" ];
-};
-fileSystems."/mnt/Blizzard" = {
-  device = "UUID=af32782e-6c8a-4d77-bce5-877727cb29c5";
-  fsType = "ext4";
-  options = [ "noatime" "defaults" ];
-};
-  # ─────────────────────────────────────────────────────────────────────────
-  # 🐧 Core System Settings
-  # ─────────────────────────────────────────────────────────────────────────
-  system.stateVersion = "25.05"; 
+
+  system.stateVersion = "25.11";
   time.timeZone = "America/Halifax";
   i18n.defaultLocale = "en_CA.UTF-8";
   networking.hostName = "boreas";
@@ -47,12 +23,8 @@ fileSystems."/mnt/Blizzard" = {
   system.autoUpgrade = {
     enable = false;
     allowReboot = false;
-     };
+  };
 
-
-  # ─────────────────────────────────────────────────────────────────────────
-  # ❄️ Flake magic & nix settings
-  # ─────────────────────────────────────────────────────────────────────────
   nix.settings = {
     download-buffer-size = 536870912;
     experimental-features = [ "nix-command" "flakes" ];
@@ -60,45 +32,42 @@ fileSystems."/mnt/Blizzard" = {
     substituters = [
         "https://cache.nixos.org/"
         "https://nix-community.cachix.org"
-      ]; #2 caches to fetch from, this speeds up build time.
+      ];
       trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       ];
   };
-  nix.optimise.automatic =true; #helps the store stay optimized and saves on storage space
-    nix.gc = { #garbage collection
+  nix.optimise.automatic =true;
+    nix.gc = { 
       automatic = true;
       dates = "daily";
       options = "-d";
     };
-
-  # ─────────────────────────────────────────────────────────────────────────
-  # ❄️ Suspend/Sleep
-  # ─────────────────────────────────────────────────────────────────────────
-  systemd.targets = { #stops the system from sleeping and suspending 
+  systemd.targets = { 
     sleep.enable = false;
     suspend.enable = false;
     hibernate.enable = false;
     hybrid-sleep.enable = false;
   };
-    #systemd.user.services."app-org.kde.kalendarac@autostart".enable = false;
-  #──────────────────────────────────────────────────────────────────────────
-  # 🧊 User Setup: isolde
-  # ─────────────────────────────────────────────────────────────────────────
   users.users.isolde = {
     isNormalUser = true;
-    #hashedPasswordFile
     description = "isolde";
-    extraGroups = [ "networkmanager" "wheel" "docker" "audio" "gamemode" "video" "render"];
+    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" "audio" "gamemode" "video" "render"];
     packages = with pkgs; [
     kdePackages.kate
     kdePackages.filelight
     ];
-  };
-   security.sudo.wheelNeedsPassword = false;
-#─────────────────────────────────────────────────────────────────────────
-  # Unfree packages allowed
-  # ─────────────────────────────────────────────────────────────────────────
+    };
+
+  security.pam.loginLimits = [
+  {
+    domain = "@audio";
+    type = "-";
+    item = "memlock";
+    value = "unlimited";
+  }
+];
+  security.sudo.wheelNeedsPassword = false;
   nixpkgs.config.allowUnfree = true;
 
 }

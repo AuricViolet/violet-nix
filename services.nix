@@ -1,12 +1,25 @@
-# ─────────────────────────────────────────────────────────────────────────
-# ⚙️ Services
-# ─────────────────────────────────────────────────────────────────────────
 { config, pkgs, inputs, lib, chaotic, ... }:
 {
 security.rtkit.enable = true;
+security.pam.services.sddm.enableGnomeKeyring = true;
 services.gnome.gnome-keyring.enable = true;
+ systemd.tmpfiles.rules = 
+  let
+    rocmEnv = pkgs.symlinkJoin {
+      name = "rocm-combined";
+      paths = with pkgs.rocmPackages; [
+        rocblas
+        hipblas
+        clr
+      ];
+    };
+  in [
+    "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
+  ];
 xdg.portal.wlr.enable = true;
 xdg.portal.enable = true;
+xdg.menus.enable = true;
+xdg.mime.enable = true;
 services = {
   xserver.xrandrHeads = [
   {
@@ -19,11 +32,12 @@ services = {
 ];
   dbus.enable = true;
   openssh.enable = true;
+  wivrn.enable = true;
+  wivrn.openFirewall = true;
   xserver.enable = true;
   libinput.enable = true;
     displayManager = {
       sddm.enable = true;
-      #sddm.theme = "sddm-astronaut";
       sddm.theme = "catppuccin-mocha-mauve";
       sddm.wayland.enable = true;
       defaultSession = "hyprland";
@@ -32,14 +46,13 @@ services = {
     desktopManager.plasma6.enable = true;
     printing.enable = false;
     blueman.enable = false;
-
     pipewire = {
       enable = true;
       alsa.enable = true;
       alsa.support32Bit = true;
       jack.enable = true;
       pulse.enable = true;
-      extraConfig.pipewire."92-low-latency" = {
+      /*extraConfig.pipewire."92-low-latency" = {
       "context.properties" = {
       "default.clock.rate" = 48000;
       "default.clock.quantum" = 32;
@@ -79,7 +92,7 @@ wireplumber.configPackages = [
       }
     ]
   '')
-];
+];*/
   };
 };
 }

@@ -1,55 +1,65 @@
-# ─────────────────────────────────────────────────────────────────────────
-# 📦 System Packages
-# ─────────────────────────────────────────────────────────────────────────
-{ pkgs, config, inputs, lib, nvf, ... }:
+{ pkgs, nixpkgs-unstable, config, inputs, lib, ... }:
 {
-
-environment.systemPackages = with pkgs; [
+environment.systemPackages = (with pkgs; [
     mission-center
     grimblast
     mpvpaper
     vesktop
+    mangohud
     kdePackages.spectacle
+    clang
+    clang-tools
     pciutils
     hyprutils
     hyprgraphics
+    kdePackages.kcalc
     hyprpolkitagent
-    gamemode
     egl-wayland
+    yabridge
+    yabridgectl
     oreo-cursors-plus
+    heroic
+    gearlever
+    icu
     kdePackages.wacomtablet
     kdePackages.sddm-kcm
-    kdePackages.dolphin
     reaper
     haruna
+    fragments
+    android-tools
     git
-    github-desktop
-    gnome-keyring # needed for hyprland?
     rar
+    vscodium-fhs
     pwvucontrol
     easyeffects
     fastfetch
-    appimage-run
+    wineWow64Packages.stable
+    wineWowPackages.stable
     p3x-onenote
-    fragments
+    qbittorrent
+    jackett
     krita
-
-
-    #Coding Stuff
+    p7zip
+    video-downloader
+    wineWow64Packages.stable
     dotnetCorePackages.sdk_9_0
-    godot-mono
-    vscode-fhs
-    blender
+    rustc
+    rustup
+    cargo
     wf-recorder
+    yt-dlp
     libnotify
     slurp
     wl-clipboard
     cliphist
-
-    #gaming stuff
+    lmstudio
     protontricks
     winetricks
+    ripgrep
     protonup-qt
+    rocmPackages.rocm-runtime
+    rocmPackages.clr
+    rocmPackages.rocblas
     (pkgs.catppuccin-sddm.override {
       flavor = "mocha";
       accent = "mauve";
@@ -58,17 +68,38 @@ environment.systemPackages = with pkgs; [
       background = "${./wallpaper.png}";
       loginBackground = true;
     })
-  ];
+  ]) ++ (with nixpkgs-unstable; [
+    alcom
+    unityhub
+    xivlauncher
+    vscode-fhs
+    godot-mono
+    blender
+  ]);
+
   programs = {
+    nix-ld.enable = true;
+    virt-manager.enable = true;
+    yazi.enable = true;
+    obs-studio = {
+      enable = true;
+      plugins = with pkgs.obs-studio-plugins; [
+        wlrobs
+        obs-vaapi
+        obs-pipewire-audio-capture
+        obs-gstreamer
+        obs-vkcapture
+     ];
+    };
     hyprland.enable = true;
     gamescope.enable = true;
     gamemode.enable = true;
     steam = {
-    enable = true;
-    extraCompatPackages = [ pkgs.proton-ge-bin ];
-    gamescopeSession = {
-        enable = true;
-      };
+      enable = true;
+      extraCompatPackages = [ pkgs.proton-ge-bin ];
+      gamescopeSession = {
+          enable = true;
+        };
     };
     xwayland.enable = true;
     firefox.enable = true;
@@ -80,45 +111,47 @@ environment.systemPackages = with pkgs; [
       package = pkgs.appimage-run.override {
         extraPkgs = pkgs: [
           pkgs.icu
-          pkgs.libxcrypt
+          pkgs.libxcrypt  
           pkgs.libxcrypt-legacy
+          pkgs.mesa
+          pkgs.vulkan-loader
+          pkgs.vulkan-tools
+          pkgs.zstd
         ];
       };
     };
 };
-# ─────────────────────────────────────────────────────────────────────────
-# 🌬️ Environment Variables
-# ─────────────────────────────────────────────────────────────────────────
+
  environment.sessionVariables = {
     KWIN_LOW_LATENCY = "1";
     KDE_NO_PRELOADING = "0";
     MOZ_ENABLE_WAYLAND= "1";
     NIXOS_OZONE_WL = "1";
     STEAM_FORCE_WAYLAND = "0";
+    XDG_MENU_PREFIX = "plasma-";
+    AMD_VULKAN_ICD = "RADV";
   };
 
-# ─────────────────────────────────────────────────────────────────────────
-# 🧊 Fonts & exclusions
-# ─────────────────────────────────────────────────────────────────────────
   fonts = {
     fontconfig.cache32Bit = true;
     fontconfig.enable = true;
     packages = with pkgs; [
-    font-awesome
-    dejavu_fonts
-    liberation_ttf
-    noto-fonts
-    corefonts
-    nerd-fonts.mononoki
-    ];
+      font-awesome
+      dejavu_fonts
+      liberation_ttf
+      noto-fonts
+      corefonts
+      nerd-fonts.mononoki
+      ];
   };
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     elisa
   ];
-  #virtualisation.libvirtd = {
-  #enable = true;
-  #};
+  virtualisation.docker.enable = true;
+  virtualisation.libvirtd = {
+  enable = true;
+  };
 
   #virtualisation.podman = {
       #enable = true;
