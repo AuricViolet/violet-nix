@@ -2,16 +2,21 @@
   description = "Nixos config flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
     nixvim.url = "github:nix-community/nixvim";
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     stylix = {
-      url = "github:nix-community/stylix/release-25.11";
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia/";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
      plasma-manager = {
@@ -23,17 +28,20 @@
 
 
 
-  outputs = { self, nixpkgs,nixpkgs-unstable, home-manager, plasma-manager,spicetify-nix,nixvim, stylix,
+  outputs = { self, nixpkgs,nixpkgs-stable, chaotic, noctalia,home-manager, plasma-manager,spicetify-nix,nixvim, stylix,
  ... }@inputs: {
    nixosConfigurations.boreas = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
+        chaotic.nixosModules.default
         inputs.stylix.nixosModules.stylix
         nixvim.nixosModules.nixvim
         ./configuration.nix
+        ./noctalia.nix
         home-manager.nixosModules.home-manager{
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "bak"; 
           home-manager.sharedModules = [
           plasma-manager.homeModules.plasma-manager
           ];
@@ -46,7 +54,7 @@
       ];
     specialArgs = {
       inherit inputs;
-      nixpkgs-unstable = import inputs.nixpkgs-unstable {
+      pkgs-stable = import inputs.nixpkgs-stable {
       system = "x86_64-linux";
       config.allowUnfree = true;
   };

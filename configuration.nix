@@ -11,11 +11,12 @@
     ./spicetify.nix #spicetify client with adblock
     ./stylix.nix
     ./nixvim.nix
+
   ];
 
   zramSwap.enable = true;
-
-  system.stateVersion = "25.11";
+  hardware.i2c.enable = true;
+  system.stateVersion = "26.05";
   time.timeZone = "America/Halifax";
   i18n.defaultLocale = "en_CA.UTF-8";
   networking.hostName = "boreas";
@@ -52,7 +53,7 @@
   users.users.isolde = {
     isNormalUser = true;
     description = "isolde";
-    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" "audio" "gamemode" "video" "render"];
+    extraGroups = [ "networkmanager" "input" "wheel" "docker" "libvirtd" "audio" "gamemode" "video" "render"];
     packages = with pkgs; [
     kdePackages.kate
     kdePackages.filelight

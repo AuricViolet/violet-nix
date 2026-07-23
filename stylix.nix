@@ -7,5 +7,4 @@
     stylix.cursor.size = 32;
     stylix.opacity.terminal = 0.5;
     stylix.opacity.desktop = 0.5;
-
 }

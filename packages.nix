@@ -1,7 +1,11 @@
-{ pkgs, nixpkgs-unstable, config, inputs, lib, ... }:
+{ pkgs, pkgs-stable, chaotic, config, inputs, lib, ... }:
 {
 environment.systemPackages = (with pkgs; [
+    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
     mission-center
+    lmstudio
+    ananicy-rules-cachyos_git
+    openal
     grimblast
     mpvpaper
     vesktop
@@ -10,85 +14,77 @@ environment.systemPackages = (with pkgs; [
     clang
     clang-tools
     pciutils
-    hyprutils
-    hyprgraphics
     kdePackages.kcalc
+    low-latency-layer
     hyprpolkitagent
     egl-wayland
     yabridge
     yabridgectl
     oreo-cursors-plus
-    heroic
-    gearlever
-    icu
     kdePackages.wacomtablet
     kdePackages.sddm-kcm
-    reaper
+    rocmPackages.rocminfo
+    rocmPackages.rocm-smi
+    python3
     haruna
-    fragments
     android-tools
     git
     rar
-    vscodium-fhs
     pwvucontrol
     easyeffects
-    fastfetch
     wineWow64Packages.stable
-    wineWowPackages.stable
     p3x-onenote
     qbittorrent
     jackett
     krita
+    fetch
     p7zip
-    video-downloader
     wineWow64Packages.stable
     dotnetCorePackages.sdk_9_0
     rustc
     rustup
     cargo
-    wf-recorder
-    yt-dlp
     libnotify
     slurp
+    imagemagick
     wl-clipboard
-    cliphist
-    lmstudio
     protontricks
     winetricks
     ripgrep
-    protonup-qt
-    rocmPackages.rocm-runtime
-    rocmPackages.clr
-    rocmPackages.rocblas
+    protonup-rs
+    alcom
+    unityhub
+    xivlauncher
+    vscode-fhs
+    fastfetch
+    godot-mono
+    blender
     (pkgs.catppuccin-sddm.override {
       flavor = "mocha";
       accent = "mauve";
       font  = "Noto Sans";
       fontSize = "9";
-      background = "${./wallpaper.png}";
+      background = "${./assets/wallpapers/snowyforest.jpg}";
       loginBackground = true;
     })
-  ]) ++ (with nixpkgs-unstable; [
-    alcom
-    unityhub
-    xivlauncher
-    vscode-fhs
-    godot-mono
-    blender
+  ]) ++ (with pkgs-stable; [
+    reaper
   ]);
 
   programs = {
-    nix-ld.enable = true;
-    virt-manager.enable = true;
+    bash.shellAliases = {
+      switch = "sudo nixos-rebuild switch";
+    };
+    gpu-screen-recorder.enable = true;
     yazi.enable = true;
     obs-studio = {
       enable = true;
       plugins = with pkgs.obs-studio-plugins; [
-        wlrobs
+        #wlrobs
         obs-vaapi
-        obs-pipewire-audio-capture
-        obs-gstreamer
-        obs-vkcapture
+        #obs-pipewire-audio-capture
+        #obs-gstreamer
+        #obs-vkcapture
      ];
     };
     hyprland.enable = true;
@@ -124,10 +120,11 @@ environment.systemPackages = (with pkgs; [
 
  environment.sessionVariables = {
     KWIN_LOW_LATENCY = "1";
-    KDE_NO_PRELOADING = "0";
+    LOW_LATENCY_LAYER= "1";
+    KDE_NO_PRELOADING = "0"; 
     MOZ_ENABLE_WAYLAND= "1";
     NIXOS_OZONE_WL = "1";
-    STEAM_FORCE_WAYLAND = "0";
+    STEAM_FORCE_WAYLAND = "1";
     XDG_MENU_PREFIX = "plasma-";
     AMD_VULKAN_ICD = "RADV";
   };
@@ -136,7 +133,7 @@ environment.systemPackages = (with pkgs; [
     fontconfig.cache32Bit = true;
     fontconfig.enable = true;
     packages = with pkgs; [
-      font-awesome
+      font-awesome_4
       dejavu_fonts
       liberation_ttf
       noto-fonts
@@ -148,14 +145,4 @@ environment.systemPackages = (with pkgs; [
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     elisa
   ];
-  virtualisation.docker.enable = true;
-  virtualisation.libvirtd = {
-  enable = true;
-  };
-
-  #virtualisation.podman = {
-      #enable = true;
-      #dockerCompat = true;
-    #};
-
 }

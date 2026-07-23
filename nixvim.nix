@@ -9,7 +9,7 @@
     colorschemes.catppuccin = {
       enable = true;
       autoLoad = true;
-      flavor = "mocha";
+      settings.flavour = "mocha";
     };
     clipboard.providers.wl-copy.enable = true;
     opts = {
@@ -21,8 +21,6 @@
       background = "dark";
    };
    plugins = {
-      blink.ripgrep.enable = true;
-      blink.autoLoad = true;
       godot.enable = true;
       godot.autoLoad = true;
       lspconfig.autoLoad = true;
@@ -30,8 +28,6 @@
       lualine.autoLoad = true;
       smear-cursor.enable = true;
       smear-cursor.autoLoad = true;
-      blink-cmp.enable = true;
-      blink.cmp.autoLoad = true;
       lint.enable = true;
       lint.autoLoad = true;
       neoscroll.enable = true;
@@ -95,8 +91,6 @@
         };
         theme = "hyper";
       };
-      dashboard.openOnSetup = true;
-      dotnet.autoload = true;
       which-key = {
         enable = true;
         settings = {
